@@ -1,0 +1,16 @@
+/*达人探店列表*/
+.msgs-list {
+    height: 90%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    overflow-y: auto;
+}
+.msg-box{
+    width: 100%;
+    height: 10%;
+    font-size: medium;
+    background-color: #fff;
+}
+
