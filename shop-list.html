@@ -136,6 +136,8 @@
       },
       sortAndQuery(sortBy) {
         this.params.sortBy = sortBy;
+        this.shops = [];
+        this.params.current = 1;
         this.queryShops();
       },
       goBack() {
@@ -152,7 +154,8 @@
           this.isReachBottom = true
           console.log("触底")
           this.params.current++
-          this.queryShops(this.params.current, 5);
+          // this.queryShops(this.params.current, 5);
+          this.queryShops();
         }else{
           this.isReachBottom = false
         }

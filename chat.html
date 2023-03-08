@@ -5,117 +5,108 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>好享_haoxiang</title>
-    <link rel="stylesheet" href="./css/element.css">
-    <link href="./css/chat.css" rel="stylesheet">
+    <!-- 引入样式 -->
+  <link rel="stylesheet" href="./css/element.css">
+  <link href="./css/main.css" rel="stylesheet">
+  <link href="./css/chat.css" rel="stylesheet">
 </head>
 <body>
-<div id="app">
-    <div class="msg-list">
-        <div class="others" :class="{self:msg.fromId==user.id}" v-for="msg in records">
-            <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
-            <div class="msg-content">{{msg.content}}</div>
+    <div id="app">
+      <div class="header">
+        <div class="search-input">
+          <el-input size="mini" placeholder="搜索🔍">
+            <i slot="prefix" class="el-input__icon el-icon-search"></i>
+          </el-input>
         </div>
+      </div>
+      <div class="chats-list">
+        <div class="chat-box" @click="toMsgDetail(chat.id)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
+          <div class="user-icon"><img :src="chat.toIcon || '/imgs/icons/default-icon.png'" alt=""></div>
+          <div class="chat-nickname">{{getNickname(chat)}}</div>
+        </div>
+      </div>
+      <foot-bar :active-btn="3"></foot-bar>
     </div>
-    <div class="send">
-        <el-input style="width: 70%" v-model="content"></el-input>
-        <el-button style="width: 28%" @click="send">发送</el-button>
-    </div>
-</div>
-<script src="./js/vue.js"></script>
-<script src="./js/axios.min.js"></script>
-<!-- 引入组件库 -->
-<script src="./js/element.js"></script>
-<script src="./js/footer.js"></script>
-<script src="./js/common.js"></script>
-<script src="./js/sockjs.js"></script>
-<script src="./js/stomp.js"></script>
-<script>
-    const app = new Vue({
+    <script src="./js/vue.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <!-- 引入组件库 -->
+    <script src="./js/element.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./js/footer.js"></script>
+    <script>
+      const app = new Vue({
         el: "#app",
         data: {
-            user:"",
-            content:"",
-            records:[],
-            stompClient: '',
-            // current:1,
-            // count: 5,
-            // isReachBottom: false,
+          user: "",
+          activeName: "1",
+          info: {},
+          chats:[],
+          params: {
+            minTime: 0, // 上一次拉取到的时间戳
+            offset: 0, // 偏移量
+          },
+          count: 5,
+          isReachBottom: false,
         },
-        created(){
-            this.connect();
-            this.queryRecords();
-            this.queryUser();
+        created() {
+          this.queryUser();
         },
-        methods:{
-            connect(){
-                var socket = new SockJS('/ws/connect');//创建SockJS连接
-                this.stompClient=Stomp.over(socket);//创建STOMP实例
-                this.stompClient.connect({},success=>{
-                    this.stompClient.subscribe('/topic/greetings',msg=>{
-                        //接收到的消息数据
-                        let receiveMsg=JSON.parse(msg.body);
-                        this.records = this.records.concat(receiveMsg);
-                        console.log("收到消息"+receiveMsg);
-                    })
-                })
-            },
-            send(){
-                if(!this.content) {
-                    this.$message({
-                        showClose: true,
-                        message: '不能发送空白信息'
-                    });
-                    return;
-                }
-                let msgObj=new Object();
-                msgObj.content=this.content;
-                msgObj.fromId = this.user.id;
-                msgObj.fromNickname = this.user.nickName;
-                msgObj.fromIcon = this.user.icon;
-                console.log(this.content);
-                this.stompClient.send("/app/hello",{},JSON.stringify(msgObj));
-                //清空输入框
-                this.content='';
-            },
-            queryRecords() {
-                axios.get("/chat/queryRecords")
-                    .then(({data}) => {
-                        // 保存用户
-                        this.records = data;
-                        console.log(this.records);
-                    })
-                    .catch(err => {
-                        this.$message.error(err)
-                    })
-            },
-            queryUser() {
-                // 查询用户信息
-                axios.get("/user/me")
-                    .then(({data}) => {
-                        // 保存用户
-                        this.user = data;
-                    })
-                    .catch(err => {
-                        location.href = "login.html"
-                    })
-            },
-            // onScroll(e) {
-            //     let scrollTop = e.target.scrollTop;
-            //     let offsetHeight = e.target.offsetHeight;
-            //     let scrollHeight = e.target.scrollHeight;
-            //     if (scrollTop === 0) {
-            //         // 到顶部了，查询一次
-            //         this.queryRecords(true);
-            //     } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
-            //         this.isReachBottom = true
-            //         // 再次查询下一页数据
-            //         this.queryBlogsOfFollow();
-            //     } else {
-            //         this.isReachBottom = false
-            //     }
-            // },
+        methods: {
+          load() {
+            this.count += 2;
+          },
+          goBack() {
+            history.back();
+          },
+          onScroll(e) {
+            let scrollTop = e.target.scrollTop;
+            let offsetHeight = e.target.offsetHeight;
+            let scrollHeight = e.target.scrollHeight;
+            if (scrollTop === 0) {
+              // 到顶部了，查询一次
+              this.queryBlogsOfFollow(true);
+            } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+              this.isReachBottom = true
+              // 再次查询下一页数据
+              this.queryBlogsOfFollow();
+            } else {
+              this.isReachBottom = false
+            }
+          },
+          queryUser() {
+            // 查询用户信息
+            axios.get("/user/me")
+              .then(({data}) => {
+                // 保存用户
+                this.user = data;
+                this.queryChats();
+              })
+              .catch(err => {
+                location.href = "login.html"
+              })
+          },
+          queryChats(){
+            axios.get("/chat/myChats?id=" + this.user.id)
+              .then(({data}) => {
+                // 保存用户
+                this.chats = data;
+              })
+              .catch(err => {
+                location.href = "login.html"
+              })
+          },
+          toMsgDetail(id) {
+            location.href = "/msg.html?id=" + id;
+          },
+          getNickname(chat){
+            if(chat.fromNickname === this.user.nickName){
+              return chat.toNickname;
+            }else{
+              return chat.fromNickname;
+            }
+          }
         },
-    })
-</script>
+      })
+    </script>
 </body>
 </html>

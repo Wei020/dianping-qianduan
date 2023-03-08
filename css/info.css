@@ -18,6 +18,12 @@
     font-size: 18px;
     font-family: Hiragino Sans GB,Arial,Helvetica,"\5B8B\4F53",sans-serif;
 }
+.header-submit-btn{
+    width: 10%;
+    color: #ff6633;
+    font-size: 22px;
+}
+
 .basic{
     height: 15%;
     display: flex;
@@ -66,6 +72,18 @@
 .logout-btn{
     width: 18%;
     margin-top: 8px;
+    height: 20px;
+    line-height: 20px;
+    color: white;
+    padding: 0 2px;
+    border-radius: 3px;
+    background-color: #f63;
+    box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.04);
+}
+
+.chat-btn{
+    width: 18%;
+    margin-top: 30px;
     height: 20px;
     line-height: 20px;
     color: white;

@@ -124,12 +124,12 @@
           headers: {"Content-Type": "multipart/form-data;boundary=" + new Date().getTime()}
         };
         axios
-          .post("/upload/blog", formData, config)
+          .post("/upload/file", formData, config)
           .then(({data}) => this.fileList.push('/imgs' + data))
           .catch(this.$message.error);
       },
       deletePic(i) {
-        axios.get("/upload/blog/delete?name=" + this.fileList[i])
+        axios.get("/upload/file/delete?name=" + this.fileList[i])
           .then(() => this.fileList.splice(i, 1))
           .catch(this.$message.error)
       },

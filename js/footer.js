@@ -1,12 +1,12 @@
 Vue.component("footBar", {
   template: `
-    <div class="foot">
+  <div class="foot">
     <div class="foot-box" :class="{active: activeBtn === 1}" @click="toPage(1)">
       <div class="foot-view"><i class="el-icon-s-home"></i></div>
       <div class="foot-text">首页</div>
     </div>
     <div class="foot-box" :class="{active: activeBtn === 2}" @click="toPage(2)">
-      <div class="foot-view"><i class="el-icon-map-location"></i></div>
+      <div class="foot-view"><i class="el-icon-view"></i></div>
       <div class="foot-text">关注</div>
     </div>
     <div class="foot-box" @click="toPage(0)">
@@ -38,7 +38,7 @@ Vue.component("footBar", {
       } else if (i === 2){
         location.href = "/follow.html"
       } else if (i === 3){
-        location.href = "/msg.html"
+        location.href = "/chat.html"
       }
     }
   }

@@ -44,6 +44,9 @@
     <div class="logout-btn" @click="follow" style="text-align: center">
       {{followed ? "取消关注" : "关注"}}
     </div>
+    <div class="chat-btn" @click="chat" style="text-align: center">
+      私信
+    </div>
   </div>
   <div class="introduce">
     <span v-if="info.introduce"></span>
@@ -172,6 +175,27 @@
             this.followed = !this.followed
           })
           .catch(this.$message.error)
+      },
+      chat(){
+        let chatObj = new Object();
+        chatObj.fromId = this.loginUser.id;
+        chatObj.fromNickname = this.loginUser.nickName;
+        chatObj.fromIcon = this.loginUser.icon;
+        chatObj.toId = this.user.id;
+        chatObj.toNickname = this.user.nickName;
+        chatObj.toIcon = this.user.icon;
+        chatObj.type = 1;
+        console.log(chatObj);
+        console.log(this.loginUser);
+        axios.post("/chat/make", chatObj)
+          .then(({data}) => {
+            console.log(data.id);
+            location.href = "/msg.html?id=" + data.id;
+          })
+          .catch(err => {
+            console.log(err);
+            this.$message.error(err)
+          });
       },
       handleClick(t) {
         if (t.name === '2') {

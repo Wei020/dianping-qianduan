@@ -1,16 +1,87 @@
-/*达人探店列表*/
-.msgs-list {
+.header{
+    width: 100%;
+    line-height: 40px;
+    height: 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ff6633;
+}
+.header-back-btn{
+    width: 10%;
+    color: #ff6633;
+    font-size: 22px;
+}
+.header-title {
+    width: 90%;
+    text-align: center;
+    font-size: 18px;
+    font-family: Hiragino Sans GB,Arial,Helvetica,"\5B8B\4F53",sans-serif;
+}
+
+.msg-list{
     height: 90%;
     width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    position: absolute;
     overflow-y: auto;
 }
+
 .msg-box{
     width: 100%;
     height: 10%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
     font-size: medium;
-    background-color: #fff;
 }
 
+.others{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.me{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+
+.user-icon{
+    width: 34px;
+    height: 34px;
+}
+
+.user-icon img{
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+
+.msg-content{
+    left: 35px;
+    height: 34px;
+    width: auto;
+}
+
+.msg-icon{
+    width: 50px;
+    height: 80px;
+}
+
+.msg-icon img{
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+}
+
+
+.send{
+    position:fixed;
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    height: 10%;
+    bottom: -20px;
+}

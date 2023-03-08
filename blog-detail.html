@@ -55,7 +55,7 @@
     </div>
     <div class="blog-text" v-html="blog.content">
     </div>
-    <div class="shop-basic">
+    <div class="shop-basic" v-show="shop.id !== undefined">
       <div class="shop-icon">
         <img :src="shop.image" alt="">
       </div>
@@ -85,26 +85,24 @@
     <div class="blog-divider"></div>
     <div class="blog-comments">
       <div class="comments-head">
-        <div>网友评价 <span>（119）</span></div>
+        <div>网友评价 <span>（{{items.length}}）</span></div>
         <div><i class="el-icon-arrow-right"></i></div>
       </div>
       <div class="comment-list">
-        <div class="comment-box" v-for="i in 3" :key="i">
+        <div class="comment-box" v-for="item in items" :key="item.id">
           <div class="comment-icon">
-            <img
-                src="https://p0.meituan.net/userheadpicbackend/57e44d6eba01aad0d8d711788f30a126549507.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0"
-                alt="">
+            <img :src="item.user.icon || '/imgs/icons/default-icon.png'" alt="">
           </div>
           <div class="comment-info">
-            <div class="comment-user">叶小乙 <span>Lv5</span></div>
-            <div style="display: flex;">
+            <div class="comment-user">{{item.user.nickName}} <span>Lv5</span></div>
+            <!-- <div style="display: flex;">
               打分
               <el-rate disabled v-model="4.5"></el-rate>
-            </div>
+            </div> -->
             <div style="padding: 5px 0; font-size: 14px">
-              某平台上买的券，价格可以当工作餐吃，虽然价格便宜，但是这家店一点都没有...
+              {{item.content}}
             </div>
-            <div class="comment-images">
+            <!-- <div class="comment-images" >
               <img
                   src="https://qcloud.dpfile.com/pc/6T7MfXzx7USPIkSy7jzm40qZSmlHUF2jd-FZUL6WpjE9byagjLlrseWxnl1LcbuSGybIjx5eX6WNgCPvcASYAw.jpg"
                   alt="">
@@ -117,7 +115,7 @@
               <img
                   src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
                   alt="">
-            </div>
+            </div> -->
             <div>
               浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5
             </div>
@@ -125,14 +123,14 @@
         </div>
         <div
             style="display: flex; justify-content: space-between;padding: 15px 0; border-top: 1px solid #f1f1f1; margin-top: 10px;">
-          <div>查看全部119条评价</div>
+          <div>查看全部{{items.length}}条评价</div>
           <div><i class="el-icon-arrow-right"></i></div>
         </div>
       </div>
     </div>
     <div class="blog-divider"></div>
   </div>
-  <div class="foot">
+  <div class="foot" v-show="isShow === 0">
     <div class="foot-box">
       <div class="foot-view"  @click="addLike()">
         <svg t="1646634642977" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2187" width="26" height="26">
@@ -141,11 +139,14 @@
         <span :class="{liked: blog.isLike}">{{blog.liked}}</span>
       </div>
     </div>
-    <div style="width: 40%">
-    </div>
+    <div style="width: 40%"></div>
     <div class="foot-box">
-      <div class="foot-view"><i class="el-icon-chat-square"></i></div>
+      <div class="foot-view" @click="input"><i class="el-icon-chat-square"></i></div>
     </div>
+  </div>
+  <div class="foot" v-show="isShow === 1">
+    <el-input style="width: 70%" v-model="content"></el-input>
+    <el-button style="width: 28%" @click="comment">发送</el-button>
   </div>
 </div>
 <script src="./js/vue.js"></script>
@@ -182,7 +183,9 @@
         y: 0
       },
       sensitivity: 60,
-      resistance: 0.3
+      resistance: 0.3,
+      content:"",
+      isShow:0
     },
     created() {
       let id = util.getUrlParam("id");
@@ -214,8 +217,12 @@
             data.images = data.images.split(",")
             this.blog = data;
             this.$nextTick(this.init);
-            this.queryShopById(data.shopId)
+            if(data.shopId !== undefined){
+              console.log(data.shopId);
+              this.queryShopById(data.shopId);
+            }
             this.queryLikeList(id);
+            this.queryBlogComments(id);
             this.queryLoginUser();
           })
           .catch(this.$message.error)
@@ -231,6 +238,14 @@
       queryLikeList(id){
         axios.get("/blog/likes/" + id)
           .then(({data}) => this.likes = data)
+          .catch(this.$message.error)
+      },
+      queryBlogComments(id){
+        axios.get("/blog-comments/query/" + id)
+          .then(({data}) => {
+            this.items = data;
+            console.log(data);
+          })
           .catch(this.$message.error)
       },
       addLike(){
@@ -380,6 +395,33 @@
         this.$emit('change', this.active)
         this.setTransition()
         this.setTransform()
+      },
+      input(){
+        this.isShow = 1;
+      },
+      comment(){
+        if(this.content === ""){
+          this.isShow = 0;
+          return;
+        }
+        let commentObj = new Object();
+        commentObj.content = this.content;
+        commentObj.userId = this.user.id;
+        commentObj.blogId = this.blog.id;
+        commentObj.parentId = 0;
+        commentObj.liked = 0;
+        commentObj.status = 0;
+        axios.post("/blog-comments/add", commentObj)
+          .then(({data}) => {
+            this.items = this.items.concat(data)
+            console.log(data);
+            this.content = "";
+            this.isShow = 0;
+          })
+          .catch(err => {
+            console.log(err);
+            this.$message.error(err)
+          });
       }
     }
   })

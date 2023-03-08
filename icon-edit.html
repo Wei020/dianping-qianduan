@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+  <title>好享_haoxiang</title>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="./css/element.css">
+  <link href="./css/info.css" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <div class="header-back-btn" @click="goBack" ><i class="el-icon-arrow-left"></i></div>
+    <div class="header-title">设置头像&nbsp;&nbsp;&nbsp;</div>
+    <div class="header-submit-btn" @click="submit"><i>√</i></div>
+  </div>
+  <div class="body">
+    <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
+    <div class="upload-btn" @click="openFileDialog">
+      <i class="el-icon-camera"></i>
+      <div style="font-size: 12px;line-height: 12px">上传照片</div>
+    </div>
+    <div class="pic-list">
+      <div class="pic-box" v-for="(f,i) in fileList" :key="i">
+        <img :src="f" alt="">
+        <i class="el-icon-close" @click="deletePic(i)"></i>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="./js/vue.js"></script>
+<script src="./js/axios.min.js"></script>
+<!-- 引入组件库 -->
+<script src="./js/element.js"></script>
+<script src="./js/common.js"></script>
+<script src="./js/footer.js"></script>
+<script>
+
+  const app = new Vue({
+    el: "#app",
+    data: {
+      user: "",
+      info: {},
+      fileList: []
+    },
+    created() {
+      this.checkLogin();
+    },
+    methods: {
+      checkLogin() {
+        // 查询用户信息
+        axios.get("/user/me")
+        .then(({data}) => {
+          this.user = data;
+          this.info = JSON.parse(sessionStorage.getItem("userInfo")) || {}
+        })
+        .catch(err => {
+          this.$message.error(err);
+          setTimeout(() => location.href = "login.html", 1000)
+        })
+      },
+      goBack(){
+        history.back();
+      },
+      submit(){
+        axios.post("/user/edit", this.user)
+          .then(resp => location.href = "/info-more.html")
+          .catch(this.$message.error)
+      },
+      openFileDialog() {
+        this.$refs.fileInput.click();
+      },
+      fileSelected() {
+        let file = this.$refs.fileInput.files[0];
+        let formData = new FormData();
+        formData.append("file", file);
+        const config = {
+          headers: {"Content-Type": "multipart/form-data;boundary=" + new Date().getTime()}
+        };
+        axios
+          .post("/upload/file", formData, config)
+          .then(({data}) => {
+            if(this.fileList[0] !== null)
+              this.fileList.splice(0, 1)
+            this.fileList.push('/imgs' + data)
+            console.log('this.user.icon')
+            this.user.icon = this.fileList[0]
+            console.log('this.user.icon')
+          })
+          .catch(this.$message.error);
+      },
+      deletePic(i) {
+        axios.get("/upload/picture/delete?name=" + this.fileList[i])
+          .then(() => this.fileList.splice(i, 1))
+          .catch(this.$message.error)
+      },
+    },
+
+  })
+</script>
+</body>
+</html>

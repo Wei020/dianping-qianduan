@@ -43,8 +43,8 @@
     <div class="basic-info">
       <div class="name">{{user.nickName}}</div>
       <span>杭州</span>
-      <div class="edit-btn" @click="toEdit">
-        编辑资料
+      <div class="edit-btn" @click="toMore">
+        更多信息
       </div>
     </div>
     <div class="logout-btn" @click="logout">
@@ -52,7 +52,7 @@
     </div>
   </div>
   <div class="introduce">
-    <span v-if="info.introduce"></span>
+    <span v-if="info.introduce">{{info.introduce}}</span>
     <span v-else>添加个人简介，让大家更好的认识你 <i class="el-icon-edit"></i></span>
   </div>
   <div class="content">
@@ -143,14 +143,15 @@
             // 保存用户详情
             this.info = data;
             // 保存到本地
+            console.log(this.info)
             sessionStorage.setItem("userInfo", JSON.stringify(data))
           })
           .catch(err => {
             this.$message.error(err);
           })
       },
-      toEdit() {
-        location.href = 'info-edit.html'
+      toMore() {
+        location.href = 'info-more.html'
       },
       logout() {
         axios.post("/user/logout")
