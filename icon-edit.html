@@ -83,7 +83,7 @@
           .then(({data}) => {
             if(this.fileList[0] !== null)
               this.fileList.splice(0, 1)
-            this.fileList.push('/imgs' + data)
+            this.fileList.push('/files' + data.fileName)
             console.log('this.user.icon')
             this.user.icon = this.fileList[0]
             console.log('this.user.icon')

@@ -38,7 +38,7 @@
   </div>
   <div class="basic">
     <div class="basic-icon">
-      <img :src="user.icon || '/imgs/icons/default-icon.png'" alt="">
+      <img :src="user.icon || '/files/icons/default-icon.png'" alt="">
     </div>
     <div class="basic-info">
       <div class="name">{{user.nickName}}</div>
@@ -63,7 +63,7 @@
             <div class="blog-img"><img :src="b.images.split(',')[0]" alt=""></div>
             <div class="blog-info">
               <div class="blog-title">{{b.title}}</div>
-              <div class="blog-liked"><img src="/imgs/thumbup.png" alt=""> {{b.liked}}</div>
+              <div class="blog-liked"><img src="/files/thumbup.png" alt=""> {{b.liked}}</div>
               <div class="blog-comments"><i class="el-icon-chat-dot-round"></i> {{b.comments}}</div>
             </div>
           </div>

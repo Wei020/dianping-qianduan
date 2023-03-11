@@ -10,7 +10,7 @@ Vue.component("footBar", {
       <div class="foot-text">关注</div>
     </div>
     <div class="foot-box" @click="toPage(0)">
-      <img class="add-btn" src="/imgs/add.png" alt="">
+      <img class="add-btn" src="/files/add.png" alt="">
     </div>
     <div class="foot-box" :class="{active: activeBtn === 3}" @click="toPage(3)">
       <div class="foot-view"><i class="el-icon-chat-dot-round"></i></div>

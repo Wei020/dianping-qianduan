@@ -125,7 +125,10 @@
         };
         axios
           .post("/upload/file", formData, config)
-          .then(({data}) => this.fileList.push('/imgs' + data))
+          .then(({data}) => {
+            this.fileList.push('/files' + data.fileName);
+            console.log("文件名:" + data.fileName);
+          })
           .catch(this.$message.error);
       },
       deletePic(i) {

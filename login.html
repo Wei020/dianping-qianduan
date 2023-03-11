@@ -23,8 +23,7 @@
     <div class="content">
       <div class="login-form">
         <div style="display: flex; justify-content: space-between">
-          <el-input style="width: 60%" placeholder="请输入手机号" v-model="form.phone" >
-          </el-input>
+          <el-input style="width: 60%" placeholder="请输入手机号" v-model="form.phone" ></el-input>
           <el-button style="width: 38%" @click="sendCode" type="success" :disabled="disabled">{{codeBtnMsg}}</el-button>
         </div>
 
