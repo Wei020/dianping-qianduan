@@ -130,7 +130,7 @@
             location.href = "/msg.html?id=" + id;
           },
           getNickname(chat){
-            if(chat.fromNickname === this.user.nickName){
+            if(chat.fromId === this.user.id){
               return chat.toNickname;
             }else{
               return chat.fromNickname;
