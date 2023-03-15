@@ -69,9 +69,10 @@
             // isReachBottom: false,
         },
         created(){
-            let chatId = util.getUrlParam("id");
-            this.queryRecords(chatId);
-            this.queryChat(chatId)
+            this.chat = JSON.parse(sessionStorage.getItem("chat")) || {};
+            console.log(this.chat);
+            this.queryRecords(this.chat.id);
+            this.connect();
             this.queryUser();
         },
         methods:{
@@ -163,18 +164,18 @@
                         this.$message.error(err)
                     })
             },
-            queryChat(chatId){
-                axios.get("/chat/queryChat?chatId=" + chatId)
-                    .then(({data}) => {
-                        // 保存用户
-                        this.chat = data;
-                        this.connect();
-                        console.log(this.chat);
-                    })
-                    .catch(err => {
-                        this.$message.error(err)
-                    })
-            },
+            // queryChat(chatId){
+            //     axios.get("/chat/queryChat?chatId=" + chatId)
+            //         .then(({data}) => {
+            //             // 保存用户
+            //             this.chat = data;
+            //             this.connect();
+            //             console.log(this.chat);
+            //         })
+            //         .catch(err => {
+            //             this.$message.error(err)
+            //         })
+            // },
             queryUser() {
                 // 查询用户信息
                 axios.get("/user/me")
@@ -187,6 +188,7 @@
                     })
             },
             goBack(){
+                sessionStorage.removeItem("chat");
                 history.back();
             },
             getNickname(chat){

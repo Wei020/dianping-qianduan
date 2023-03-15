@@ -21,7 +21,7 @@
         <div class="find-btn" @click="find"><i class="el-icon-zoom-in"></i></div>
       </div>
       <div class="chats-list" v-if="flag === 1">
-        <div class="chat-box" @click="toMsgDetail(chat.id)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
+        <div class="chat-box" @click="toMsgDetail(chat)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
           <div class="user-icon"><img :src="chat.toIcon || '/files/icons/default-icon.png'" alt=""></div>
           <div class="chat-nickname">{{getNickname(chat)}}</div>
         </div>
@@ -126,8 +126,10 @@
             }
             this.flag = 1;
           },
-          toMsgDetail(id) {
-            location.href = "/msg.html?id=" + id;
+          toMsgDetail(chat) {
+            console.log("chat为：" + chat);
+            sessionStorage.setItem("chat", JSON.stringify(chat));
+            location.href = "/msg.html";
           },
           getNickname(chat){
             if(chat.fromId === this.user.id){
