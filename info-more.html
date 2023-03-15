@@ -158,7 +158,8 @@
         location.href = 'introduce-edit.html'
       },
       handleGender(command){
-        this.info.gender = command
+        this.info.gender = command;
+
         axios.post("/user/infoEdit", this.info)
           .catch(this.$message.error)
       },
@@ -173,12 +174,15 @@
     },
     computed: {
       queryGender(){
+        if(this.info.gender === 1){
+          console.log("男");
+        }
         if(this.info === null || this.info.gender === '0')
-          return '选择'
-        else if(this.info.gender === '1')
-          return '男'
+          return '选择';
+        else if(this.info.gender === 1)
+          return '男';
         else
-          return '女'
+          return '女';
       }
     }
   })
