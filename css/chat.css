@@ -1,4 +1,4 @@
-.search-bar{
+.search-bar {
     background-color: rgb(65, 81, 98);
     color: white;
     display: flex;
@@ -8,11 +8,16 @@
     padding: 0 8px;
 }
 
-.search-input{
+.search-input {
     width: 70%;
 }
 
-.find-btn{
+.find-btn {
+    /*width: 2%;*/
+    font-size: 14px;
+}
+
+.create-btn {
     /*width: 2%;*/
     font-size: 14px;
 }
@@ -23,7 +28,8 @@
     width: 100%;
     position: absolute;
 }
-.chat-box{
+
+.chat-box {
     width: 100%;
     height: 10%;
     display: flex;
@@ -39,7 +45,8 @@
     width: 100%;
     position: absolute;
 }
-.user-box{
+
+.user-box {
     width: 100%;
     height: 10%;
     display: flex;
@@ -50,24 +57,24 @@
     background-color: #fff;
 }
 
-.user-icon{
+.user-icon {
     width: 34px;
     height: 34px;
 }
 
-.user-icon img{
+.user-icon img {
     width: 100%;
     height: 100%;
     background-size: cover;
 }
 
-.chat-nickname{
+.chat-nickname {
     left: 35px;
     height: 34px;
     width: auto;
 }
 
-.user-nickname{
+.user-nickname {
     left: 35px;
     height: 34px;
     width: auto;

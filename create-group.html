@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>好享_haoxiang</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="./css/element.css">
+    <link href="./css/main.css" rel="stylesheet">
+    <link href="./css/login.css" rel="stylesheet">
+
+    <style type="text/css">
+        .el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2),
+        .el-tabs--bottom .el-tabs__item.is-top:nth-child(2),
+        .el-tabs--top .el-tabs__item.is-bottom:nth-child(2),
+        .el-tabs--top .el-tabs__item.is-top:nth-child(2) {
+            padding-left: 15px;
+        }
+
+        .el-tabs,
+        .el-tab-pane {
+            height: 100%;
+        }
+
+        .el-tabs__header {
+            height: 10%;
+        }
+
+        .el-tabs__content {
+            height: 90%;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+            <div class="header-title">创建群聊&nbsp;&nbsp;&nbsp;</div>
+            <div class="header-submit-btn" @click="submit"><i class="el-icon-check"></i></div>
+        </div>
+        <div class="content">
+            <div class="form">
+                <div style="display: flex; justify-content: space-between">
+                    <el-input style="width: 60%" placeholder="请输入群聊名称" v-model="name"></el-input>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/vue.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <!-- 引入组件库 -->
+    <script src="./js/element.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./js/footer.js"></script>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data: {
+                user: "",
+                activeName: "1",
+                name: "",
+                isReachBottom: false,
+            },
+            created() {
+                this.queryUser();
+            },
+            methods: {
+                load() {
+                    this.count += 2;
+                },
+                queryUser() {
+                    // 查询用户信息
+                    axios.get("/user/me")
+                        .then(({ data }) => {
+                            // 保存用户
+                            this.user = data;
+                        })
+                        .catch(err => {
+                            location.href = "login.html"
+                        })
+                },
+                goBack() {
+                    location.href = "chat.html"
+                },
+                submit() {
+                    let groupObj = new Object;
+                    groupObj.name = this.name;
+                    groupObj.createId = this.user.id;
+                    groupObj.number = 1;
+                    axios.post("/chat/makeGroup", groupObj)
+                        .then(({ data }) => {
+                            console.log(data.id);
+                            console.log("chat为：" + data);
+                            sessionStorage.setItem("chat", JSON.stringify(data));
+                            location.href = "/msg.html";
+                        })
+                        .catch(err => {
+                            console.log(err);
+                            this.$message.error(err)
+                        });
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>

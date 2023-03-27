@@ -1,145 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>好享_haoxiang</title>
-    <!-- 引入样式 -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>好享_haoxiang</title>
+  <!-- 引入样式 -->
   <link rel="stylesheet" href="./css/element.css">
   <link href="./css/main.css" rel="stylesheet">
   <link href="./css/chat.css" rel="stylesheet">
 </head>
+
 <body>
-    <div id="app">
-      <div class="search-bar">
-        <div class="search-input">
-          <el-input size="mini" placeholder="昵称/账号" v-model="condition">
-            <i slot="prefix" class="el-input__icon el-icon-search"></i>
-          </el-input>
-        </div>
-        <div class="find-btn" @click="find"><i class="el-icon-zoom-in"></i></div>
+  <div id="app">
+    <div class="search-bar">
+      <div class="search-input">
+        <el-input size="mini" placeholder="昵称/账号" v-model="condition">
+          <i slot="prefix" class="el-input__icon el-icon-search"></i>
+        </el-input>
       </div>
-      <div class="chats-list" v-if="flag === 1">
-        <div class="chat-box" @click="toMsgDetail(chat)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
-          <div class="user-icon"><img :src="chat.toIcon || '/files/icons/default-icon.png'" alt=""></div>
-          <div class="chat-nickname">{{getNickname(chat)}}</div>
-        </div>
+      <div class="find-btn" @click="find"><i class="el-icon-zoom-in"></i></div>
+      <div class="create-btn" @click="show = !show">
+        <i class="el-icon-circle-plus-outline"></i>
+        <el-collapse-transition>
+          <div v-show="show">
+            <div class="transition-box" @click="create">创建群聊</div>
+            <!-- <div class="transition-box">el-collapse-transition</div> -->
+          </div>
+        </el-collapse-transition>
       </div>
-      <div class="user-list" v-if="flag === 2">
-        <div class="user-box" @click="toOtherInfo(user.id)" v-for="user in users">
-          <div class="user-icon"><img :src="user.icon || '/files/icons/default-icon.png'" alt=""></div>
-          <div class="user-nickname">{{user.nickName}}</div>
-        </div>
-      </div>
-      <foot-bar :active-btn="3"></foot-bar>
     </div>
-    <script src="./js/vue.js"></script>
-    <script src="./js/axios.min.js"></script>
-    <!-- 引入组件库 -->
-    <script src="./js/element.js"></script>
-    <script src="./js/common.js"></script>
-    <script src="./js/footer.js"></script>
-    <script>
-      const app = new Vue({
-        el: "#app",
-        data: {
-          user: "",
-          activeName: "1",
-          condition: "",
-          info: {},
-          chats:[],
-          users:[],
-          params: {
-            minTime: 0, // 上一次拉取到的时间戳
-            offset: 0, // 偏移量
-          },
-          count: 5,
-          isReachBottom: false,
-          flag: 1
+    <div class="chats-list" v-if="flag === 1">
+      <div class="chat-box" @click="toMsgDetail(chat)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
+        <div class="user-icon"><img :src="chat.toIcon || '/files/icons/default-icon.png'" alt=""></div>
+        <div class="chat-nickname">{{getNickname(chat)}}</div>
+      </div>
+    </div>
+    <div class="user-list" v-if="flag === 2">
+      <div class="user-box" @click="toOtherInfo(user.id)" v-for="user in users">
+        <div class="user-icon"><img :src="user.icon || '/files/icons/default-icon.png'" alt=""></div>
+        <div class="user-nickname">{{user.nickName}}</div>
+      </div>
+    </div>
+    <foot-bar :active-btn="3"></foot-bar>
+  </div>
+  <script src="./js/vue.js"></script>
+  <script src="./js/axios.min.js"></script>
+  <!-- 引入组件库 -->
+  <script src="./js/element.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/footer.js"></script>
+  <script>
+    const app = new Vue({
+      el: "#app",
+      data: {
+        user: "",
+        activeName: "1",
+        condition: "",
+        info: {},
+        chats: [],
+        users: [],
+        params: {
+          minTime: 0, // 上一次拉取到的时间戳
+          offset: 0, // 偏移量
         },
-        created() {
-          this.queryUser();
+        count: 5,
+        isReachBottom: false,
+        flag: 1,
+        show: false
+      },
+      created() {
+        this.queryUser();
+      },
+      methods: {
+        load() {
+          this.count += 2;
         },
-        methods: {
-          load() {
-            this.count += 2;
-          },
-          goBack() {
-            history.back();
-          },
-          onScroll(e) {
-            let scrollTop = e.target.scrollTop;
-            let offsetHeight = e.target.offsetHeight;
-            let scrollHeight = e.target.scrollHeight;
-            if (scrollTop === 0) {
-              // 到顶部了，查询一次
-              this.queryBlogsOfFollow(true);
-            } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
-              this.isReachBottom = true
-              // 再次查询下一页数据
-              this.queryBlogsOfFollow();
-            } else {
-              this.isReachBottom = false
-            }
-          },
-          queryUser() {
-            // 查询用户信息
-            axios.get("/user/me")
-              .then(({data}) => {
-                // 保存用户
-                this.user = data;
-                this.queryChats();
-              })
-              .catch(err => {
-                location.href = "login.html"
-              })
-          },
-          queryChats(){
-            axios.get("/chat/myChats?id=" + this.user.id)
-              .then(({data}) => {
-                // 保存用户
-                this.chats = data;
-              })
-              .catch(err => {
-                location.href = "login.html"
-              })
-          },
-          find(){
-            console.log(this.condition);
-            axios.get("/user/find?condition=" + this.condition)
-              .then(({data}) => {
-                console.log(data);
-                this.users = data;
-                this.flag = 2;
-                this.condition = "";
-              })
-              .catch(err =>{
-                location.href = "login.html"
-              })
-          },
-          toOtherInfo(id){
-            if(id === this.user.id){
-              location.href = "/info.html"
-            }else{
-              location.href = "/other-info.html?id=" + id
-            }
-            this.flag = 1;
-          },
-          toMsgDetail(chat) {
-            console.log("chat为：" + chat);
-            sessionStorage.setItem("chat", JSON.stringify(chat));
-            location.href = "/msg.html";
-          },
-          getNickname(chat){
-            if(chat.fromId === this.user.id){
-              return chat.toNickname;
-            }else{
-              return chat.fromNickname;
-            }
+        goBack() {
+          history.back();
+        },
+        onScroll(e) {
+          let scrollTop = e.target.scrollTop;
+          let offsetHeight = e.target.offsetHeight;
+          let scrollHeight = e.target.scrollHeight;
+          if (scrollTop === 0) {
+            // 到顶部了，查询一次
+            this.queryBlogsOfFollow(true);
+          } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+            this.isReachBottom = true
+            // 再次查询下一页数据
+            this.queryBlogsOfFollow();
+          } else {
+            this.isReachBottom = false
           }
         },
-      })
-    </script>
+        queryUser() {
+          // 查询用户信息
+          axios.get("/user/me")
+            .then(({ data }) => {
+              // 保存用户
+              this.user = data;
+              this.queryChats();
+            })
+            .catch(err => {
+              location.href = "login.html"
+            })
+        },
+        queryChats() {
+          axios.get("/chat/myChats?id=" + this.user.id)
+            .then(({ data }) => {
+              // 保存用户
+              this.chats = data;
+            })
+            .catch(err => {
+              location.href = "login.html"
+            })
+        },
+        find() {
+          if (this.condition === "") {
+            this.$message.error("搜索条件为空！");
+            return
+          }
+          console.log(this.condition);
+          axios.get("/user/find?condition=" + this.condition)
+            .then(({ data }) => {
+              console.log(data);
+              this.users = data;
+              this.flag = 2;
+              this.condition = "";
+            })
+            .catch(err => {
+              location.href = "login.html"
+            })
+        },
+        create() {
+          location.href = "create-group.html"
+        },
+        toOtherInfo(id) {
+          if (id === this.user.id) {
+            location.href = "/info.html"
+          } else {
+            location.href = "/other-info.html?id=" + id
+          }
+          this.flag = 1;
+        },
+        toMsgDetail(chat) {
+          console.log("chat为：" + chat);
+          sessionStorage.setItem("chat", JSON.stringify(chat));
+          location.href = "/msg.html";
+        },
+        getNickname(chat) {
+          if (chat.fromId === this.user.id) {
+            return chat.toNickname;
+          } else {
+            return chat.fromNickname;
+          }
+        }
+      },
+    })
+  </script>
 </body>
+
 </html>
