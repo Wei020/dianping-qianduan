@@ -31,16 +31,26 @@
         </el-collapse-transition>
       </div>
     </div>
-    <div class="chats-list" v-if="flag === 1">
-      <div class="chat-box" @click="toMsgDetail(chat)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
-        <div class="user-icon"><img :src="chat.toIcon || '/files/icons/default-icon.png'" alt=""></div>
-        <div class="chat-nickname">{{getNickname(chat)}}</div>
+    <div class="content">
+      <div class="chats-list" v-if="flag === 1">
+        <div class="chat-box" @click="toMsgDetail(chat)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
+          <div class="user-icon"><img :src="chat.toIcon || '/files/icons/default-icon.png'" alt=""></div>
+          <div class="chat-nickname">{{getNickname(chat)}}</div>
+        </div>
       </div>
-    </div>
-    <div class="user-list" v-if="flag === 2">
-      <div class="user-box" @click="toOtherInfo(user.id)" v-for="user in users">
-        <div class="user-icon"><img :src="user.icon || '/files/icons/default-icon.png'" alt=""></div>
-        <div class="user-nickname">{{user.nickName}}</div>
+      <div class="user-list" v-if="flag === 2">
+        用户信息
+        <div class="user-box" @click="toOtherInfo(user.id)" v-for="user in users">
+          <div class="user-icon"><img :src="user.icon || '/files/icons/default-icon.png'" alt=""></div>
+          <div class="user-nickname">{{user.nickName}}</div>
+        </div>
+      </div>
+      <div class="group-list" v-if="flag === 2">
+        群聊信息
+        <div class="user-box" @click="toGroupInfo(group.id)" v-for="group in groups">
+          <div class="user-icon"><img :src="group.icon || '/files/icons/default-icon.png'" alt=""></div>
+          <div class="user-nickname">{{group.name}}</div>
+        </div>
       </div>
     </div>
     <foot-bar :active-btn="3"></foot-bar>
@@ -61,6 +71,7 @@
         info: {},
         chats: [],
         users: [],
+        groups: [],
         params: {
           minTime: 0, // 上一次拉取到的时间戳
           offset: 0, // 偏移量
@@ -127,12 +138,20 @@
             .then(({ data }) => {
               console.log(data);
               this.users = data;
-              this.flag = 2;
-              this.condition = "";
             })
             .catch(err => {
               location.href = "login.html"
             })
+          axios.get("/group/find?condition=" + this.condition)
+            .then(({ data }) => {
+              console.log(data);
+              this.groups = data;
+            })
+            .catch(err => {
+              location.href = "login.html"
+            })
+          this.condition = "";
+          this.flag = 2;
         },
         create() {
           location.href = "create-group.html"
@@ -143,6 +162,10 @@
           } else {
             location.href = "/other-info.html?id=" + id
           }
+          this.flag = 1;
+        },
+        toGroupInfo(id) {
+          location.href = "/group-info.html?id=" + id
           this.flag = 1;
         },
         toMsgDetail(chat) {

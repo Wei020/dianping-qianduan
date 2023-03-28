@@ -22,9 +22,15 @@
     font-size: 14px;
 }
 
+.content {
+    height: 90%;
+    width: 100%;
+    display: flex;
+}
+
 /*达人探店列表*/
 .chats-list {
-    height: 90%;
+    height: 100%;
     width: 100%;
     position: absolute;
 }
@@ -41,7 +47,11 @@
 }
 
 .user-list {
-    height: 90%;
+    width: 100%;
+    position: absolute;
+}
+
+.group-list {
     width: 100%;
     position: absolute;
 }

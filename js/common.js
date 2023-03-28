@@ -7,7 +7,7 @@ axios.defaults.timeout = 2000;
 let token = sessionStorage.getItem("token");
 axios.interceptors.request.use(
   config => {
-    if(token) config.headers['authorization'] = token
+    if (token) config.headers['authorization'] = token
     return config
   },
   error => {
@@ -24,19 +24,21 @@ axios.interceptors.response.use(function (response) {
 }, function (error) {
   // 一般是服务端异常或者网络异常
   console.log(error)
-  if(error.response.status == 401){
+  if (error.response.status == 401) {
     // 未登录，跳转
     setTimeout(() => {
       location.href = "/login.html"
     }, 200);
     return Promise.reject("请先登录");
+  } else if (error.response.status == 503) {
+    return;
   }
   return Promise.reject("服务器异常");
 });
-axios.defaults.paramsSerializer = function(params) {
+axios.defaults.paramsSerializer = function (params) {
   let p = "";
   Object.keys(params).forEach(k => {
-    if(params[k]){
+    if (params[k]) {
       p = p + "&" + k + "=" + params[k]
     }
   })
