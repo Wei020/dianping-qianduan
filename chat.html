@@ -31,6 +31,9 @@
         </el-collapse-transition>
       </div>
     </div>
+    <div class="notice" @click="toNotice">
+      <i class="el-icon-chat-dot-square">消息通知</i>
+    </div>
     <div class="content">
       <div class="chats-list" v-if="flag === 1">
         <div class="chat-box" @click="toMsgDetail(chat)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
@@ -179,6 +182,9 @@
           } else {
             return chat.fromNickname;
           }
+        },
+        toNotice() {
+          location.href = "/notice.html?id=" + this.user.id;
         }
       },
     })

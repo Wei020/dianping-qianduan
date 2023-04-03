@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,221 +9,237 @@
     <link rel="stylesheet" href="./css/element.css">
     <link href="./css/msg.css" rel="stylesheet">
 </head>
+
 <body>
-<div id="app">
-    <div class="header">
-        <div class="header-back-btn" @click="goBack" ><i class="el-icon-arrow-left"></i></div>
-        <div class="header-title">{{getNickname(chat)}}&nbsp;&nbsp;&nbsp;</div>
-    </div>
-    <div class="msg-list" @scroll="onScroll" id="list">
-        <div class="msg-box" v-for="msg in records">
-            <div class="others" v-show="msg.fromId !== user.id">
-                <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
-                <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
-                <div class="msg-icon" v-if="msg.type === 1"><img :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
-                <div class="msg-video" v-if="msg.type === 2">
-                    <video width="320" height="240" controls="controls" autoplay="autoplay">
-                        <source :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'" type="video/mp4" />
-                    </video>
+    <div id="app">
+        <div class="header">
+            <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+            <div class="header-title">{{getNickname(chat)}}&nbsp;&nbsp;&nbsp;</div>
+            <div class="header-more-btn" @click="toMore"><i class="el-icon-more"></i></div>
+        </div>
+        <div class="msg-list" @scroll="onScroll" id="list">
+            <div class="msg-box" v-for="msg in records">
+                <div class="others" v-show="msg.fromId !== user.id">
+                    <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
+                    <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
+                    <div class="msg-icon" v-if="msg.type === 1"><img
+                            :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
+                    <div class="msg-video" v-if="msg.type === 2">
+                        <video width="320" height="240" controls="controls" autoplay="autoplay">
+                            <source :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
+                                type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+                <div class="me" v-show="msg.fromId === user.id">
+                    <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
+                    <div class="msg-icon" v-if="msg.type === 1"><img
+                            :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
+                    <div class="msg-video" v-if="msg.type === 2">
+                        <video width="320" height="240" controls="controls" autoplay="autoplay">
+                            <source :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
+                                type="video/mp4" />
+                        </video>
+                    </div>
+                    <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
                 </div>
             </div>
-            <div class="me" v-show="msg.fromId === user.id">
-                <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
-                <div class="msg-icon" v-if="msg.type === 1"><img :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
-                <div class="msg-video" v-if="msg.type === 2">
-                    <video width="320" height="240" controls="controls" autoplay="autoplay">
-                        <source :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'" type="video/mp4" />
-                    </video>
-                </div>
-                <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
+        </div>
+        <div class="send">
+            <el-input style="width: 70%" v-model="content"></el-input>
+            <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
+            <div class="upload-btn" style="width: 5%" @click="openFileDialog">
+                <i class="el-icon-picture-outline-round"></i>
             </div>
+            <el-button style="width: 23%" @click="sendMsg(0)">发送</el-button>
         </div>
     </div>
-    <div class="send">
-        <el-input style="width: 70%" v-model="content"></el-input>
-        <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
-        <div class="upload-btn" style="width: 5%" @click="openFileDialog">
-            <i class="el-icon-picture-outline-round"></i>
-        </div>
-        <el-button style="width: 23%" @click="sendMsg(0)">发送</el-button>
-    </div>
-</div>
-<script src="./js/vue.js"></script>
-<script src="./js/axios.min.js"></script>
-<!-- 引入组件库 -->
-<script src="./js/element.js"></script>
-<script src="./js/footer.js"></script>
-<script src="./js/common.js"></script>
-<script src="./js/sockjs.js"></script>
-<script src="./js/stomp.js"></script>
-<script>
-    const app = new Vue({
-        el: "#app",
-        data: {
-            user:"",
-            content:"",
-            records:[],
-            stompClient: '',
-            chat:""
-            // current:1,
-            // count: 5,
-            // isReachBottom: false,
-        },
-        created(){
-            this.chat = JSON.parse(sessionStorage.getItem("chat")) || {};
-            console.log(this.chat);
-            this.queryRecords(this.chat.id);
-            this.connect();
-            this.queryUser();
-        },
-        methods:{
-            connect(){
-                var socket = new SockJS('/ws/connect');//创建SockJS连接
-                this.stompClient=Stomp.over(socket);//创建STOMP实例
-                if(this.chat.type === 0){
-                    this.stompClient.connect({},success=>{
-                        this.stompClient.subscribe('/topic/greetings',msg=>{
-                            //接收到的消息数据
-                            let receiveMsg=JSON.parse(msg.body);
-                            this.records = this.records.concat(receiveMsg);
-                            console.log("收到消息"+receiveMsg);
+    <script src="./js/vue.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <!-- 引入组件库 -->
+    <script src="./js/element.js"></script>
+    <script src="./js/footer.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./js/sockjs.js"></script>
+    <script src="./js/stomp.js"></script>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data: {
+                user: "",
+                content: "",
+                records: [],
+                stompClient: '',
+                chat: ""
+                // current:1,
+                // count: 5,
+                // isReachBottom: false,
+            },
+            created() {
+                this.chat = JSON.parse(sessionStorage.getItem("chat")) || {};
+                console.log(this.chat);
+                this.queryRecords(this.chat.id);
+                this.connect();
+                this.queryUser();
+            },
+            methods: {
+                connect() {
+                    var socket = new SockJS('/ws/connect');//创建SockJS连接
+                    this.stompClient = Stomp.over(socket);//创建STOMP实例
+                    if (this.chat.type === 0) {
+                        this.stompClient.connect({}, success => {
+                            this.stompClient.subscribe('/topic/greetings', msg => {
+                                //接收到的消息数据
+                                let receiveMsg = JSON.parse(msg.body);
+                                this.records = this.records.concat(receiveMsg);
+                                console.log("收到消息" + receiveMsg);
+                            })
                         })
-                    })
-                }else{
-                    this.stompClient.connect({},success=>{
-                        this.stompClient.subscribe('/user/' + this.user.id +  '/chat',msg=>{
-                            //接收到的消息数据
-                            let receiveMsg=JSON.parse(msg.body);
-                            console.log("收到消息"+receiveMsg);
-                            this.records = this.records.concat(receiveMsg);
+                    } else {
+                        this.stompClient.connect({}, success => {
+                            this.stompClient.subscribe('/user/' + this.user.id + '/chat', msg => {
+                                //接收到的消息数据
+                                let receiveMsg = JSON.parse(msg.body);
+                                console.log("收到消息" + receiveMsg);
+                                this.records = this.records.concat(receiveMsg);
+                            })
                         })
-                    })
-                }
+                    }
+                },
+                sendMsg(type) {
+                    if (!this.content) {
+                        this.$message({
+                            showClose: true,
+                            message: '不能发送空白信息'
+                        });
+                        return;
+                    }
+                    let msgObj = new Object();
+                    msgObj.content = this.content;
+                    msgObj.type = type;
+                    msgObj.fromId = this.user.id;
+                    msgObj.fromNickname = this.user.nickName;
+                    msgObj.fromIcon = this.user.icon;
+                    msgObj.chatId = this.chat.id;
+                    if (this.chat.toId === this.user.id) {
+                        msgObj.toId = this.chat.fromId;
+                        msgObj.toNickname = this.chat.fromNickname;
+                        msgObj.toIcon = this.chat.fromIcon;
+                    } else {
+                        msgObj.toId = this.chat.toId;
+                        msgObj.toNickname = this.chat.toNickname;
+                        msgObj.toIcon = this.chat.toIcon;
+                    }
+                    console.log(msgObj);
+                    if (this.chat.type === 0) {
+                        console.log("1111");
+                        this.stompClient.send("/app/hello", {}, JSON.stringify(msgObj));
+                    } else {
+                        this.records = this.records.concat(msgObj);
+                        this.stompClient.send("/app/chat", {}, JSON.stringify(msgObj));
+                    }
+                    //清空输入框
+                    this.content = '';
+                },
+                openFileDialog() {
+                    this.$refs.fileInput.click();
+                },
+                fileSelected() {
+                    let file = this.$refs.fileInput.files[0];
+                    let formData = new FormData();
+                    formData.append("file", file);
+                    const config = {
+                        headers: { "Content-Type": "multipart/form-data;boundary=" + new Date().getTime() }
+                    };
+                    axios
+                        .post("/upload/file", formData, config)
+                        .then(({ data }) => {
+                            console.log("上传结果:" + data);
+                            this.content = '/files' + data.fileName;
+                            this.sendMsg(data.type);
+                        })
+                        .catch(this.$message.error);
+                },
+                queryRecords(chatId) {
+                    axios.get("/chat/queryRecords?chatId=" + chatId)
+                        .then(({ data }) => {
+                            // 保存用户
+                            this.records = data;
+                            console.log(this.records);
+                        })
+                        .catch(err => {
+                            this.$message.error(err)
+                        })
+                },
+                // queryChat(chatId){
+                //     axios.get("/chat/queryChat?chatId=" + chatId)
+                //         .then(({data}) => {
+                //             // 保存用户
+                //             this.chat = data;
+                //             this.connect();
+                //             console.log(this.chat);
+                //         })
+                //         .catch(err => {
+                //             this.$message.error(err)
+                //         })
+                // },
+                queryUser() {
+                    // 查询用户信息
+                    axios.get("/user/me")
+                        .then(({ data }) => {
+                            // 保存用户
+                            this.user = data;
+                        })
+                        .catch(err => {
+                            location.href = "login.html"
+                        })
+                },
+                goBack() {
+                    sessionStorage.removeItem("chat");
+                    history.back();
+                },
+                toMore() {
+                    if (this.chat.type === 0) {
+                        location.href = "group-info.html?id=" + this.chat.toId;
+                    } else if (this.chat.toId === this.user.id) {
+                        location.href = "info.html";
+                    } else {
+                        location.href = "/other-info.html?id=" + this.chat.toId;
+                    }
+                },
+                getNickname(chat) {
+                    if (chat.fromNickname === this.user.nickName) {
+                        return chat.toNickname;
+                    } else {
+                        return chat.fromNickname;
+                    }
+                },
+                onScroll(e) {
+                    let scrollTop = e.target.scrollTop;
+                    let offsetHeight = e.target.offsetHeight;
+                    let scrollHeight = e.target.scrollHeight;
+                    // if (scrollTop === 0) {
+                    //     // 到顶部了，查询一次
+                    //     this.queryRecords(true);
+                    // } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+                    //     this.isReachBottom = true
+                    //     // 再次查询下一页数据
+                    //     this.queryBlogsOfFollow();
+                    // } else {
+                    //     this.isReachBottom = false
+                    // }
+                },
             },
-            sendMsg(type){
-                if(!this.content) {
-                    this.$message({
-                        showClose: true,
-                        message: '不能发送空白信息'
-                    });
-                    return;
-                }
-                let msgObj=new Object();
-                msgObj.content=this.content;
-                msgObj.type = type;
-                msgObj.fromId = this.user.id;
-                msgObj.fromNickname = this.user.nickName;
-                msgObj.fromIcon = this.user.icon;
-                msgObj.chatId = this.chat.id;
-                if(this.chat.toId === this.user.id){
-                    msgObj.toId = this.chat.fromId;
-                    msgObj.toNickname = this.chat.fromNickname;
-                    msgObj.toIcon = this.chat.fromIcon;
-                }else{
-                    msgObj.toId = this.chat.toId;
-                    msgObj.toNickname = this.chat.toNickname;
-                    msgObj.toIcon = this.chat.toIcon;
-                }
-                console.log(msgObj);
-                if(this.chat.type === 0){
-                    console.log("1111");
-                    this.stompClient.send("/app/hello",{},JSON.stringify(msgObj));
-                }else{
-                    this.records = this.records.concat(msgObj);
-                    this.stompClient.send("/app/chat",{},JSON.stringify(msgObj));
-                }
-                //清空输入框
-                this.content='';
-            },
-            openFileDialog() {
-                this.$refs.fileInput.click();
-            },
-            fileSelected() {
-                let file = this.$refs.fileInput.files[0];
-                let formData = new FormData();
-                formData.append("file", file);
-                const config = {
-                    headers: {"Content-Type": "multipart/form-data;boundary=" + new Date().getTime()}
-                };
-                axios
-                    .post("/upload/file", formData, config)
-                    .then(({data}) => {
-                        console.log("上传结果:" + data);
-                        this.content = '/files' + data.fileName;
-                        this.sendMsg(data.type);
-                    })
-                    .catch(this.$message.error);
-            },
-            queryRecords(chatId) {
-                axios.get("/chat/queryRecords?chatId=" + chatId)
-                    .then(({data}) => {
-                        // 保存用户
-                        this.records = data;
-                        console.log(this.records);
-                    })
-                    .catch(err => {
-                        this.$message.error(err)
-                    })
-            },
-            // queryChat(chatId){
-            //     axios.get("/chat/queryChat?chatId=" + chatId)
-            //         .then(({data}) => {
-            //             // 保存用户
-            //             this.chat = data;
-            //             this.connect();
-            //             console.log(this.chat);
-            //         })
-            //         .catch(err => {
-            //             this.$message.error(err)
-            //         })
-            // },
-            queryUser() {
-                // 查询用户信息
-                axios.get("/user/me")
-                    .then(({data}) => {
-                        // 保存用户
-                        this.user = data;
-                    })
-                    .catch(err => {
-                        location.href = "login.html"
-                    })
-            },
-            goBack(){
-                sessionStorage.removeItem("chat");
-                history.back();
-            },
-            getNickname(chat){
-                if(chat.fromNickname === this.user.nickName){
-                    return chat.toNickname;
-                }else{
-                    return chat.fromNickname;
-                }
-            },
-            onScroll(e) {
-                let scrollTop = e.target.scrollTop;
-                let offsetHeight = e.target.offsetHeight;
-                let scrollHeight = e.target.scrollHeight;
-                // if (scrollTop === 0) {
-                //     // 到顶部了，查询一次
-                //     this.queryRecords(true);
-                // } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
-                //     this.isReachBottom = true
-                //     // 再次查询下一页数据
-                //     this.queryBlogsOfFollow();
-                // } else {
-                //     this.isReachBottom = false
-                // }
-            },
-        },
-        watch:{
-            records:{
-                handler(){
-                    var element = document.getElementById("list");
-                    element.scrollTop = element.scrollHeight;
+            watch: {
+                records: {
+                    handler() {
+                        var element = document.getElementById("list");
+                        element.scrollTop = element.scrollHeight;
+                    }
                 }
             }
-        }
-    })
-</script>
+        })
+    </script>
 </body>
+
 </html>

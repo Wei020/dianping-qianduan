@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好享_haoxiang</title>
+    <link rel="stylesheet" href="./css/element.css">
+    <link href="./css/msg.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+            <div class="header-title">消息通知&nbsp;&nbsp;&nbsp;</div>
+            <!-- <div class="header-more-btn" @click="toMore"><i class="el-icon-more"></i></div> -->
+        </div>
+        <div class="msg-list" @scroll="onScroll" id="list">
+            <div class="msg-box" v-for="msg in records">
+                <div class="msg-content" v-if="msg.type === 2">{{msg.fromNickname}}申请加入{{msg.toNickname}}</div>
+            </div>
+        </div>
+    </div>
+    <script src="./js/vue.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <!-- 引入组件库 -->
+    <script src="./js/element.js"></script>
+    <script src="./js/footer.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./js/sockjs.js"></script>
+    <script src="./js/stomp.js"></script>
+    <script>
+        const app = new Vue({
+            el: "#app",
+            data: {
+                user: "",
+                content: "",
+                records: [],
+                stompClient: '',
+                // current:1,
+                // count: 5,
+                // isReachBottom: false,
+            },
+            created() {
+                this.queryRecords(this.user.id);
+                this.connect();
+                this.queryUser();
+            },
+            methods: {
+                connect() {
+                    var socket = new SockJS('/ws/connect');//创建SockJS连接
+                    this.stompClient = Stomp.over(socket);//创建STOMP实例
+                    this.stompClient.connect({}, success => {
+                        this.stompClient.subscribe('/user/' + this.user.id + '/chat', msg => {
+                            //接收到的消息数据
+                            let receiveMsg = JSON.parse(msg.body);
+                            console.log("收到消息" + receiveMsg);
+                            this.records = this.records.concat(receiveMsg);
+                        })
+                    });
+                },
+                queryRecords(id) {
+                    axios.get("/chat/queryNotice?id=" + id)
+                        .then(({ data }) => {
+                            // 保存用户
+                            this.records = data;
+                            console.log(this.records);
+                        })
+                        .catch(err => {
+                            this.$message.error(err)
+                        })
+                },
+                // queryChat(chatId){
+                //     axios.get("/chat/queryChat?chatId=" + chatId)
+                //         .then(({data}) => {
+                //             // 保存用户
+                //             this.chat = data;
+                //             this.connect();
+                //             console.log(this.chat);
+                //         })
+                //         .catch(err => {
+                //             this.$message.error(err)
+                //         })
+                // },
+                queryUser() {
+                    // 查询用户信息
+                    axios.get("/user/me")
+                        .then(({ data }) => {
+                            // 保存用户
+                            this.user = data;
+                        })
+                        .catch(err => {
+                            location.href = "login.html"
+                        })
+                },
+                goBack() {
+                    sessionStorage.removeItem("chat");
+                    history.back();
+                },
+                onScroll(e) {
+                    let scrollTop = e.target.scrollTop;
+                    let offsetHeight = e.target.offsetHeight;
+                    let scrollHeight = e.target.scrollHeight;
+                    // if (scrollTop === 0) {
+                    //     // 到顶部了，查询一次
+                    //     this.queryRecords(true);
+                    // } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+                    //     this.isReachBottom = true
+                    //     // 再次查询下一页数据
+                    //     this.queryBlogsOfFollow();
+                    // } else {
+                    //     this.isReachBottom = false
+                    // }
+                },
+            },
+            watch: {
+                records: {
+                    handler() {
+                        var element = document.getElementById("list");
+                        element.scrollTop = element.scrollHeight;
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
