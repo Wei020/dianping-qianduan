@@ -67,6 +67,10 @@
     width: auto;
 }
 
+.notice-state {
+    text-align: right;
+}
+
 .msg-icon {
     width: 50px;
     height: 80px;

@@ -18,8 +18,9 @@
             <!-- <div class="header-more-btn" @click="toMore"><i class="el-icon-more"></i></div> -->
         </div>
         <div class="msg-list" @scroll="onScroll" id="list">
-            <div class="msg-box" v-for="msg in records">
-                <div class="msg-content" v-if="msg.type === 2">{{msg.fromNickname}}申请加入{{msg.toNickname}}</div>
+            <div class="msg-box" v-for="notice in records" @click="doNotice(notice)">
+                <div class="msg-content" v-if="notice.type === 0">{{notice.fromNickname}}申请加入{{notice.content}}</div>
+                <div class="notice-state">{{getState(notice)}}</div>
             </div>
         </div>
     </div>
@@ -44,7 +45,6 @@
                 // isReachBottom: false,
             },
             created() {
-                this.queryRecords(this.user.id);
                 this.connect();
                 this.queryUser();
             },
@@ -53,7 +53,7 @@
                     var socket = new SockJS('/ws/connect');//创建SockJS连接
                     this.stompClient = Stomp.over(socket);//创建STOMP实例
                     this.stompClient.connect({}, success => {
-                        this.stompClient.subscribe('/user/' + this.user.id + '/chat', msg => {
+                        this.stompClient.subscribe('/user/' + this.user.id + '/notice', msg => {
                             //接收到的消息数据
                             let receiveMsg = JSON.parse(msg.body);
                             console.log("收到消息" + receiveMsg);
@@ -62,7 +62,7 @@
                     });
                 },
                 queryRecords(id) {
-                    axios.get("/chat/queryNotice?id=" + id)
+                    axios.get("/notice/queryNotice?id=" + id)
                         .then(({ data }) => {
                             // 保存用户
                             this.records = data;
@@ -90,6 +90,7 @@
                         .then(({ data }) => {
                             // 保存用户
                             this.user = data;
+                            this.queryRecords(this.user.id);
                         })
                         .catch(err => {
                             location.href = "login.html"
@@ -114,6 +115,45 @@
                     //     this.isReachBottom = false
                     // }
                 },
+                doNotice(notice) {
+                    if (notice.state === 1 || notice.state === 2) {
+                        return;
+                    }
+                    var params = new URLSearchParams();
+                    params.append('id', notice.id);
+                    this.$confirm('是否同意?', '提示', {
+                        confirmButtonText: '同意',
+                        cancelButtonText: '拒绝',
+                        type: 'warning'
+                    }).then(() => {
+                        params.append('flag', 1);
+                        axios.post("/notice/doNotice", params)
+                            .catch(this.$message.error)
+                        this.$message({
+                            type: 'success',
+                            message: '操作成功!'
+                        });
+                        notice.state = 1;
+                    }).catch(() => {
+                        params.append('flag', 0);
+                        axios.post("/notice/doNotice", params)
+                            .catch(this.$message.error)
+                        this.$message({
+                            type: 'success',
+                            message: '操作成功!'
+                        });
+                        notice.state = 2;
+                    });
+                },
+                getState(notice) {
+                    if (notice.state === 2) {
+                        return '已拒绝';
+                    } else if (notice.state === 1) {
+                        return '已通过';
+                    } else {
+                        return '未处理';
+                    }
+                }
             },
             watch: {
                 records: {
