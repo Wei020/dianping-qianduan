@@ -20,7 +20,11 @@
         <div class="msg-list" @scroll="onScroll" id="list">
             <div class="msg-box" v-for="notice in records" @click="doNotice(notice)">
                 <div class="msg-content" v-if="notice.type === 0">{{notice.fromNickname}}申请加入{{notice.content}}</div>
-                <div class="notice-state">{{getState(notice)}}</div>
+                <div class="notice-state">
+                    <i v-if="notice.fromId === user.id" class="el-icon-top-right"></i>
+                    <i v-else class="el-icon-bottom-left"></i>
+                    {{getState(notice)}}
+                </div>
             </div>
         </div>
     </div>
@@ -97,8 +101,7 @@
                         })
                 },
                 goBack() {
-                    sessionStorage.removeItem("chat");
-                    history.back();
+                    location.href = "chat.html";
                 },
                 onScroll(e) {
                     let scrollTop = e.target.scrollTop;
@@ -116,7 +119,7 @@
                     // }
                 },
                 doNotice(notice) {
-                    if (notice.state === 1 || notice.state === 2) {
+                    if (notice.fromId === this.user.id || notice.state === 1 || notice.state === 2) {
                         return;
                     }
                     var params = new URLSearchParams();

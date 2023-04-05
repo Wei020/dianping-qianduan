@@ -59,10 +59,13 @@
             <span v-if="group.introduce">{{group.introduce}}</span>
             <span v-else>无</span>
         </div>
-        <div class="numbers-icon">
+        <!-- <div class="numbers-icon">
             <div class="user-icon-mini" v-for="u in numbers" :key="u.id">
                 <img :src="u.icon || '/imgs/icons/default-icon.png'" alt="">
             </div>
+        </div> -->
+        <div class="out" v-show="followed === true">
+            <el-button type="primary" round @click="out">退出群聊</el-button>
         </div>
         <foot-bar :active-btn="0"></foot-bar>
     </div>
@@ -81,7 +84,7 @@
                 activeName: "1",
                 group: "",
                 chat: "",
-                followed: false, // 是否关注了
+                followed: false, // 是否加入了
                 numbers: []
             },
             created() {
@@ -142,11 +145,40 @@
                         location.href = "/msg.html";
                     } else {
                         axios.post("/group/follow/" + this.group.id)
+                            .then(({ data }) => {
+                                location.href = "notice.html?id=" + this.user.id;
+                            })
                             .catch(err => {
                                 console.log(err);
                                 this.$message.error(err)
                             });
                     }
+                },
+                out() {
+                    this.$confirm('是否退出群聊?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.post("/group/out/" + this.group.id)
+                            .then(({ data }) => {
+                                this.group = data;
+                                this.followed = false;
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                this.$message.error(err)
+                            });
+                        this.$message({
+                            type: 'success',
+                            message: '退出成功!'
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '已取消'
+                        });
+                    });
                 },
                 queryFiveNumbers() {
                     axios.get("/group/five/" + this.group.id)

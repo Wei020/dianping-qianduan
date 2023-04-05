@@ -64,10 +64,12 @@
 .msg-content {
     left: 35px;
     height: 34px;
-    width: auto;
+    width: 70%;
 }
 
+
 .notice-state {
+    width: 25%;
     text-align: right;
 }
 
