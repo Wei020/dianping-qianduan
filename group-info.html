@@ -8,7 +8,7 @@
     <!-- 引入样式 -->
     <link rel="stylesheet" href="./css/element.css">
     <link href="./css/main.css" rel="stylesheet">
-    <link href="./css/info.css" rel="stylesheet">
+    <link href="./css/group-info.css" rel="stylesheet">
 
     <style type="text/css">
         .el-tabs--bottom .el-tabs__item.is-bottom:nth-child(2),
@@ -59,11 +59,12 @@
             <span v-if="group.introduce">{{group.introduce}}</span>
             <span v-else>无</span>
         </div>
-        <!-- <div class="numbers-icon">
+        <div class="numbers">
             <div class="user-icon-mini" v-for="u in numbers" :key="u.id">
                 <img :src="u.icon || '/imgs/icons/default-icon.png'" alt="">
             </div>
-        </div> -->
+            <div class="all" @click="getAll">查看全部成员</div>
+        </div>
         <div class="out" v-show="followed === true">
             <el-button type="primary" round @click="out">退出群聊</el-button>
         </div>
@@ -187,36 +188,10 @@
                             this.numbers = data;
                         })
                         .catch(this.$message.error)
+                },
+                getAll() {
+                    location.href = "group-numbers.html?group=" + JSON.stringify(this.group);
                 }
-                // chat() {
-                //     let chatObj = new Object();
-                //     chatObj.fromId = this.loginUser.id;
-                //     // chatObj.fromNickname = this.loginUser.nickName;
-                //     // chatObj.fromIcon = this.loginUser.icon;
-                //     chatObj.toId = this.user.id;
-                //     // chatObj.toNickname = this.user.nickName;
-                //     // chatObj.toIcon = this.user.icon;
-                //     chatObj.type = 1;
-                //     // chatObj.chatName = this.user.nickName;
-                //     console.log(chatObj);
-                //     console.log(this.loginUser);
-                //     axios.post("/chat/make", chatObj)
-                //         .then(({ data }) => {
-                //             console.log(data.id);
-                //             console.log("chat为：" + data);
-                //             sessionStorage.setItem("chat", JSON.stringify(data));
-                //             location.href = "/msg.html";
-                //         })
-                //         .catch(err => {
-                //             console.log(err);
-                //             this.$message.error(err)
-                //         });
-                // },
-                // handleClick(t) {
-                //     if (t.name === '2') {
-                //         this.queryCommonFollow();
-                //     }
-                // },
             },
 
         })
