@@ -73,8 +73,35 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="评价" name="2">评价</el-tab-pane>
-        <el-tab-pane label="粉丝(0)" name="3">粉丝(0)</el-tab-pane>
+        <el-tab-pane label="评价" name="2">
+          <div class="blog-list" @scroll="onScroll">
+            <div v-for="c in comments" :key="c.id" class="blog-item">
+              <div class="blog-img"><img :src="c.blog.images.split(',')[0]" alt=""></div>
+              <div class="blog-info">
+                <div class="blog-title">{{c.blog.title}}</div>
+                <!-- <div class="blog-liked"><img src="/files/thumbup.png" alt=""> {{b.liked}}</div>
+                <div class="blog-comments"><i class="el-icon-chat-dot-round"></i> {{b.comments}}</div> -->
+              </div>
+              <div class="comment-info">{{c.content}}</div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="粉丝" name="3">
+          <div class="blog-list" @scroll="onScroll">
+            <div class="user-box" @click="toOtherInfo(f.id)" v-for="f in fans" :key="f.id">
+              <div class="user-icon"><img :src="f.icon || '/files/icons/default-icon.png'" alt=""></div>
+              <div class="user-nickname">{{f.nickName}}</div>
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="卡券" name="4">
+          <!-- <div class="blog-list" @scroll="onScroll">
+            <div class="user-box" @click="toOtherInfo(f.id)" v-for="f in fans" :key="f.id">
+              <div class="user-icon"><img :src="f.icon || '/files/icons/default-icon.png'" alt=""></div>
+              <div class="user-nickname">{{f.nickName}}</div>
+            </div>
+          </div> -->
+        </el-tab-pane>
       </el-tabs>
     </div>
     <foot-bar :active-btn="4"></foot-bar>
@@ -93,7 +120,10 @@
         activeName: "1",
         info: {},
         blogs: [],
+        comments: [],
+        fans: [],
         current: 1,
+        city: "",
         // blogs2: [], // 关注的人的播客
         // params: {
         //   minTime: 0, // 上一次拉取到的时间戳
@@ -168,9 +198,31 @@
             .catch(this.$message.error)
         },
         handleClick(r) {
-          if (r.name === '4') {
-            this.queryBlogsOfFollow(true);
+          if (r.name === '2') {
+            this.queryMyComments();
+          } else if (r.name === '3') {
+            this.queryMyFans();
           }
+        },
+        queryMyComments() {
+          axios.post("/blog-comments/comments")
+            .then(({ data }) => {
+              this.comments = data;
+              console.log(this.comments);
+            })
+            .catch(err => {
+              this.$message.error(err)
+            })
+        },
+        queryMyFans() {
+          axios.post("/follow/fans")
+            .then(({ data }) => {
+              this.fans = data;
+              console.log(this.fans);
+            })
+            .catch(err => {
+              this.$message.error(err)
+            })
         },
         addLike(b) {
           axios.put("/blog/like/" + b.id)

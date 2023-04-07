@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -13,209 +14,211 @@
 
   </style>
 </head>
+
 <body>
-<div id="app">
-  <div class="header">
-    <div class="header-back-btn" @click="goBack" ><i class="el-icon-arrow-left"></i></div>
-    <div class="header-title">个人信息&nbsp;&nbsp;&nbsp;</div>
-  </div>
-  <div class="edit-container">
-    <div class="info-box">
-      <div class="info-item">
-        <div class="info-label">头像</div>
-        <div class="info-btn" @click="iconEdit">
-          <img width="35" :src="user.icon || '/imgs/icons/default-icon.png'" alt="">
-          <div><i class="el-icon-arrow-right"></i></div>
+  <div id="app">
+    <div class="header">
+      <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+      <div class="header-title">个人信息&nbsp;&nbsp;&nbsp;</div>
+    </div>
+    <div class="edit-container">
+      <div class="info-box">
+        <div class="info-item">
+          <div class="info-label">头像</div>
+          <div class="info-btn" @click="iconEdit">
+            <img width="35" :src="user.icon || '/imgs/icons/default-icon.png'" alt="">
+            <div><i class="el-icon-arrow-right"></i></div>
+          </div>
         </div>
-      </div>
-      <div class="divider"></div>
-      <div class="info-item">
-        <div class="info-label">昵称</div>
-        <div class="info-btn" @click="nameEdit">
-          <div>{{user.nickName}}</div>
-          <div>
-            <i class="el-icon-arrow-right"></i>
+        <div class="divider"></div>
+        <div class="info-item">
+          <div class="info-label">昵称</div>
+          <div class="info-btn" @click="nameEdit">
+            <div>{{user.nickName}}</div>
+            <div>
+              <i class="el-icon-arrow-right"></i>
+            </div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="info-item">
+          <div class="info-label">个人介绍</div>
+          <div class="info-btn" @click="introduceEdit">
+            <div style="overflow: hidden; width: 150px;text-align: right">{{info.introduce || '介绍一下自己'}}</div>
+            <div>
+              <i class="el-icon-arrow-right"></i>
+            </div>
           </div>
         </div>
       </div>
-      <div class="divider"></div>
-      <div class="info-item">
-        <div class="info-label">个人介绍</div>
-        <div class="info-btn" @click="introduceEdit">
-          <div style="overflow: hidden; width: 150px;text-align: right">{{info.introduce || '介绍一下自己'}}</div>
-          <div>
-            <i class="el-icon-arrow-right"></i>
+      <div class="info-box">
+        <div class="info-item">
+          <div class="info-label">性别</div>
+          <div class="info-btn">
+            <div>{{queryGender}}</div>
+            <div><el-dropdown @command="handleGender">
+                <span class="el-dropdown-link">
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="1">男</el-dropdown-item>
+                  <el-dropdown-item command="2">女</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="info-item">
+          <div class="info-label">城市</div>
+          <div class="info-btn">
+            <div>{{info.city || '选择'}}</div>
+            <div><el-dropdown @command="handleCity">
+                <span class="el-dropdown-link">
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="北京">北京</el-dropdown-item>
+                  <el-dropdown-item command="上海">上海</el-dropdown-item>
+                  <el-dropdown-item command="杭州">杭州</el-dropdown-item>
+                  <el-dropdown-item command="广州">广州</el-dropdown-item>
+                  <el-dropdown-item command="深圳">深圳</el-dropdown-item>
+                  <el-dropdown-item command="武汉">武汉</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="info-item">
+          <div class="info-label">生日</div>
+          <div class="info-btn" @click="birthdayEdit">
+            <div>{{info.birthday || '添加'}}</div>
+            <div><i class="el-icon-arrow-right"></i></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <div class="info-item">
+          <div class="info-label">我的积分</div>
+          <div class="info-btn">
+            <div>查看积分</div>
+            <div><i class="el-icon-arrow-right"></i></div>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="info-item">
+          <div class="info-label">会员等级</div>
+          <div class="info-btn">
+            <div><a href="javascript:void(0)">成为VIP尊享特权</a></div>
+            <div><i class="el-icon-arrow-right"></i></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="info-box">
-      <div class="info-item">
-        <div class="info-label">性别</div>
-        <div class="info-btn">
-          <div>{{queryGender}}</div>
-          <div><el-dropdown @command="handleGender">
-            <span class="el-dropdown-link">
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="1">男</el-dropdown-item>
-              <el-dropdown-item command="2">女</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown></div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="info-item">
-        <div class="info-label">城市</div>
-        <div class="info-btn">
-          <div>{{info.city || '选择'}}</div>
-          <div><el-dropdown @command="handleCity">
-            <span class="el-dropdown-link">
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="北京">北京</el-dropdown-item>
-              <el-dropdown-item command="上海">上海</el-dropdown-item>
-              <el-dropdown-item command="杭州">杭州</el-dropdown-item>
-              <el-dropdown-item command="广州">广州</el-dropdown-item>
-              <el-dropdown-item command="深圳">深圳</el-dropdown-item>
-              <el-dropdown-item command="武汉">武汉</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown></div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="info-item">
-        <div class="info-label">生日</div>
-        <div class="info-btn" @click="birthdayEdit">
-          <div>{{info.birthday || '添加'}}</div>
-          <div><i class="el-icon-arrow-right"></i></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-box">
-      <div class="info-item">
-        <div class="info-label">我的积分</div>
-        <div class="info-btn">
-          <div>查看积分</div>
-          <div><i class="el-icon-arrow-right"></i></div>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div class="info-item">
-        <div class="info-label">会员等级</div>
-        <div class="info-btn">
-          <div><a href="javascript:void(0)">成为VIP尊享特权</a></div>
-          <div><i class="el-icon-arrow-right"></i></div>
-        </div>
-      </div>
-    </div>
+    <foot-bar :active-btn="4"></foot-bar>
   </div>
-  <foot-bar :active-btn="4"></foot-bar>
-</div>
-<script src="./js/vue.js"></script>
-<script src="./js/axios.min.js"></script>
-<!-- 引入组件库 -->
-<script src="./js/element.js"></script>
-<script src="./js/common.js"></script>
-<script src="./js/footer.js"></script>
-<script>
+  <script src="./js/vue.js"></script>
+  <script src="./js/axios.min.js"></script>
+  <!-- 引入组件库 -->
+  <script src="./js/element.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/footer.js"></script>
+  <script>
 
-  const app = new Vue({
-    el: "#app",
-    data: {
-      user: "",
-      info: {},
-    },
-    created() {
-      this.checkLogin()
-    },
-    methods: {
-      checkLogin() {
-        // 查询用户信息
-        axios.get("/user/me")
-        .then(({data}) => {
-          this.user = data;
-          this.info = JSON.parse(sessionStorage.getItem("userInfo")) || {}
-        })
-        .catch(err => {
-          this.$message.error(err);
-          setTimeout(() => location.href = "login.html", 1000)
-        })
+    const app = new Vue({
+      el: "#app",
+      data: {
+        user: "",
+        info: {},
       },
-      goBack(){
-        location.href = 'info.html'
+      created() {
+        this.checkLogin()
       },
-      nameEdit(){
-        location.href = 'name-edit.html'
-      },
-      iconEdit(){
-        location.href = 'icon-edit.html'
-      },
-      introduceEdit(){
-        location.href = 'introduce-edit.html'
-      },
-      handleGender(command){
-        this.$confirm('是否确认修改?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.info.gender = command;
-          console.log(this.info.gender);
-          axios.post("/user/infoEdit", this.info)
-            .catch(this.$message.error)
-          this.$message({
-            type: 'success',
-            message: '修改成功!'
+      methods: {
+        checkLogin() {
+          // 查询用户信息
+          axios.get("/user/me")
+            .then(({ data }) => {
+              this.user = data;
+              this.info = JSON.parse(sessionStorage.getItem("userInfo")) || {}
+            })
+            .catch(err => {
+              this.$message.error(err);
+              setTimeout(() => location.href = "login.html", 1000)
+            })
+        },
+        goBack() {
+          location.href = 'info.html'
+        },
+        nameEdit() {
+          location.href = 'name-edit.html'
+        },
+        iconEdit() {
+          location.href = 'icon-edit.html'
+        },
+        introduceEdit() {
+          location.href = 'introduce-edit.html'
+        },
+        handleGender(command) {
+          this.$confirm('是否确认修改?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.info.gender = command;
+            console.log(this.info.gender);
+            axios.post("/user/infoEdit", this.info)
+              .catch(this.$message.error)
+            this.$message({
+              type: 'success',
+              message: '修改成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            });
           });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消操作'
-          });     
-        });     
-      },
-      handleCity(command){
-        this.$confirm('是否确认修改?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.info.city = command;
-          axios.post("/user/infoEdit", this.info)
-            .catch(this.$message.error)
-          this.$message({
-            type: 'success',
-            message: '修改成功!'
+        },
+        handleCity(command) {
+          this.$confirm('是否确认修改?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            this.info.city = command;
+            axios.post("/user/infoEdit", this.info)
+              .catch(this.$message.error)
+            this.$message({
+              type: 'success',
+              message: '修改成功!'
+            });
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消操作'
+            });
           });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消操作'
-          });     
-        });    
-      },
-      birthdayEdit(){
-        location.href = 'birthday-edit.html'
-      }
-    },
-    computed: {
-      queryGender(){
-        if(this.info.gender === '1'){
-          console.log("男");
+        },
+        birthdayEdit() {
+          location.href = 'birthday-edit.html'
         }
-        if(this.info === null || this.info.gender === '0')
-          return '选择';
-        else if(this.info.gender === '1')
-          return '男';
-        else
-          return '女';
+      },
+      computed: {
+        queryGender() {
+          if (this.info.gender === '1') {
+            console.log("男");
+          }
+          if (this.info === null || this.info.gender === 0)
+            return '选择';
+          else if (this.info.gender === '1')
+            return '男';
+          else
+            return '女';
+        }
       }
-    }
-  })
-</script>
+    })
+  </script>
 </body>
+
 </html>
