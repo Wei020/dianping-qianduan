@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
@@ -8,59 +9,75 @@
   <link rel="stylesheet" href="./css/element.css">
   <link href="./css/info.css" rel="stylesheet">
 </head>
+
+<style>
+  .body {
+    width: 100%;
+  }
+
+  .body textarea {
+    width: 100%;
+    border: 0px;
+    border-bottom: 1px;
+    border-bottom-color: antiquewhite;
+    border-bottom-style: solid;
+  }
+</style>
+
 <body>
-<div id="app">
-  <div class="header">
-    <div class="header-back-btn" @click="goBack" ><i class="el-icon-arrow-left"></i></div>
-    <div class="header-title">个人简介&nbsp;&nbsp;&nbsp;</div>
-    <div class="header-submit-btn" @click="submit"><i>√</i></div>
+  <div id="app">
+    <div class="header">
+      <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+      <div class="header-title">个人简介&nbsp;&nbsp;&nbsp;</div>
+      <div class="header-submit-btn" @click="submit"><i>√</i></div>
+    </div>
+    <div class="body">
+      <textarea v-model="info.introduce" placeholder="简短介绍下自己吧~" rows="3" maxlength="30"></textarea>
+    </div>
   </div>
-  <div class="body">
-    <input type="text" v-model="info.introduce" placeholder="简短介绍下自己吧~">
-  </div>
-</div>
-<script src="./js/vue.js"></script>
-<script src="./js/axios.min.js"></script>
-<!-- 引入组件库 -->
-<script src="./js/element.js"></script>
-<script src="./js/common.js"></script>
-<script src="./js/footer.js"></script>
-<script>
+  <script src="./js/vue.js"></script>
+  <script src="./js/axios.min.js"></script>
+  <!-- 引入组件库 -->
+  <script src="./js/element.js"></script>
+  <script src="./js/common.js"></script>
+  <script src="./js/footer.js"></script>
+  <script>
 
-  const app = new Vue({
-    el: "#app",
-    data: {
-      user: "",
-      info: {},
-    },
-    created() {
-      this.checkLogin();
-    },
-    methods: {
-      checkLogin() {
-        // 查询用户信息
-        axios.get("/user/me")
-        .then(({data}) => {
-          this.user = data;
-          this.info = JSON.parse(sessionStorage.getItem("userInfo")) || {}
-        })
-        .catch(err => {
-          this.$message.error(err);
-          setTimeout(() => location.href = "login.html", 1000)
-        })
+    const app = new Vue({
+      el: "#app",
+      data: {
+        user: "",
+        info: {},
       },
-      goBack(){
-        history.back();
+      created() {
+        this.checkLogin();
       },
-      submit(){
-        sessionStorage.setItem("userInfo", JSON.stringify(this.info))
-        axios.post("/user/infoEdit", this.info)
-          .then(resp => location.href = "/info-more.html")
-          .catch(this.$message.error)
-      }
-    },
+      methods: {
+        checkLogin() {
+          // 查询用户信息
+          axios.get("/user/me")
+            .then(({ data }) => {
+              this.user = data;
+              this.info = JSON.parse(sessionStorage.getItem("userInfo")) || {}
+            })
+            .catch(err => {
+              this.$message.error(err);
+              setTimeout(() => location.href = "login.html", 1000)
+            })
+        },
+        goBack() {
+          history.back();
+        },
+        submit() {
+          sessionStorage.setItem("userInfo", JSON.stringify(this.info))
+          axios.post("/user/infoEdit", this.info)
+            .then(resp => location.href = "/info-more.html")
+            .catch(this.$message.error)
+        }
+      },
 
-  })
-</script>
+    })
+  </script>
 </body>
+
 </html>

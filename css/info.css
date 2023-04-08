@@ -1,4 +1,4 @@
-.header{
+.header {
     width: 100%;
     line-height: 40px;
     height: 6%;
@@ -7,29 +7,33 @@
     justify-content: space-between;
     border-bottom: 2px solid #ff6633;
 }
-.header-back-btn{
-    width: 10%;
-    color: #ff6633;
-    font-size: 22px;
-}
-.header-title {
-    width: 90%;
-    text-align: center;
-    font-size: 18px;
-    font-family: Hiragino Sans GB,Arial,Helvetica,"\5B8B\4F53",sans-serif;
-}
-.header-submit-btn{
+
+.header-back-btn {
     width: 10%;
     color: #ff6633;
     font-size: 22px;
 }
 
-.basic{
+.header-title {
+    width: 90%;
+    text-align: center;
+    font-size: 18px;
+    font-family: Hiragino Sans GB, Arial, Helvetica, "\5B8B\4F53", sans-serif;
+}
+
+.header-submit-btn {
+    width: 10%;
+    color: #ff6633;
+    font-size: 22px;
+}
+
+.basic {
     height: 15%;
     display: flex;
     justify-content: space-between;
     padding: 15px 15px 5px 15px;
 }
+
 .basic-icon {
     width: 80px;
     height: 80px;
@@ -38,6 +42,7 @@
     border-radius: 50%;
     box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.07);
 }
+
 .basic-icon img {
     border-radius: 50%;
     width: 100%;
@@ -48,20 +53,22 @@
     width: 54%;
     padding: 8px;
 }
-.basic-info .name{
+
+.basic-info .name {
     overflow: hidden;
     font-weight: bold;
     font-size: 14px;
 }
-.basic-info span{
+
+.basic-info span {
     display: inline-block;
     padding: 0 10px;
     background-color: #eeeded;
     margin: 5px 0 10px;
     border-radius: 2px;
- }
+}
 
-.edit-btn{
+.edit-btn {
     width: 90%;
     line-height: 20px;
     border-radius: 12px;
@@ -69,7 +76,8 @@
     border: #eeeded 1px solid;
     box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.04);
 }
-.logout-btn{
+
+.logout-btn {
     width: 18%;
     margin-top: 8px;
     height: 20px;
@@ -81,7 +89,7 @@
     box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.04);
 }
 
-.chat-btn{
+.chat-btn {
     width: 18%;
     margin-top: 30px;
     height: 20px;
@@ -93,33 +101,39 @@
     box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.04);
 }
 
-.introduce{
+.introduce {
     padding: 0 15px;
 }
+
 .content {
     height: 61%;
 }
 
-.edit-container{
+.edit-container {
     background-color: #f4f4f4;
 }
+
 .divider {
     height: 1px;
     background-color: #e4e4e4;
 }
+
 .info-box {
     margin-bottom: 10px;
     padding: 5px 15px;
     background-color: #fff;
 }
-.info-item{
+
+.info-item {
     display: flex;
     justify-content: space-between;
     line-height: 40px;
 }
-.info-btn{
+
+.info-btn {
     display: flex;
 }
+
 .info-btn div {
     margin-left: 5px;
 }
@@ -129,9 +143,10 @@
     padding: 10px;
     height: 90px;
     width: 90%;
-    box-shadow: 1px 1px 4px 1px rgba(0,0,0,0.1);
+    box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
 }
+
 .blog-list {
     height: 100%;
     width: 100%;
@@ -140,6 +155,7 @@
     justify-content: space-around;
     overflow-y: auto;
 }
+
 /* .blog-box{
     width: 90%;
     background-color: #fff;
@@ -152,36 +168,43 @@
     height: 90px;
     margin-right: 10px;
 }
+
 .blog-img img {
     width: 100%;
     height: 100%;
 }
+
 .blog-info {
     width: 50%;
     flex-grow: 1;
 }
+
 .blog-title {
     line-height: 20px;
 }
+
 .blog-liked {
     line-height: 16px;
     align-items: center;
 }
+
 .blog-liked img {
     width: 16px;
     height: 16px;
 }
+
 .blog-comments i {
     font-size: 16px;
 }
 
 
-.follow-info{
+.follow-info {
     display: flex;
     justify-content: space-between;
     padding: 15px 10px 5px 10px;
     align-items: center;
 }
+
 .follow-info-icon {
     width: 15%;
     padding: 1px;
@@ -189,17 +212,20 @@
     border-radius: 50%;
     box-shadow: 0 0 3px 2px rgba(0, 0, 0, 0.07);
 }
+
 .follow-info-icon img {
     border-radius: 50%;
     width: 100%;
     height: 100%;
 }
-.follow-info-name{
+
+.follow-info-name {
     width: 56%;
     padding: 8px;
     font-size: 14px;
 }
-.follow-info-btn{
+
+.follow-info-btn {
     width: 30%;
     font-size: 10px;
     line-height: 20px;
@@ -219,46 +245,55 @@
     justify-content: space-around;
     overflow-y: auto;
 }
-.blog-box{
+
+.blog-box {
     width: 90%;
     background-color: #fff;
     margin: 5px 0;
     box-shadow: 0 3px 4px 1px rgba(0, 0, 0, 0.1);
     border-radius: 3px;
 }
-.blog-img2 img{
+
+.blog-img2 img {
     width: 100%;
     border-radius: 3px;
 }
+
 .blog-title {
     padding: 2px 10px;
     line-height: 24px;
     width: 92%;
     overflow: hidden;
 }
+
 .blog-foot {
     display: flex;
     justify-content: space-between;
     margin: 10px 0 5px 0;
     padding: 0 10px;
 }
+
 .blog-user-icon {
     width: 10%;
     margin-right: 3px;
 }
+
 .blog-user-name {
     width: 65%;
     overflow: hidden;
 }
-.blog-user-icon img{
+
+.blog-user-icon img {
     width: 100%;
 }
+
 .blog-liked {
     width: 25%;
     display: flex;
     justify-content: flex-end;
 }
-.blog-liked img{
+
+.blog-liked img {
     width: 30%;
     height: 75%;
     margin-right: 2px;

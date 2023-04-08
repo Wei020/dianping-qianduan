@@ -20,8 +20,8 @@
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
       </div>
-      <div class="find-btn" @click="find"><i class="el-icon-zoom-in"></i></div>
-      <div class="create-btn" @click="show = !show">
+      <div class="find-btn" v-show="flag === 1" @click="find"><i class="el-icon-zoom-in"></i></div>
+      <div class="create-btn" v-show="flag === 1" @click="show = !show">
         <i class="el-icon-circle-plus-outline"></i>
         <el-collapse-transition>
           <div v-show="show">
@@ -29,6 +29,9 @@
             <!-- <div class="transition-box">el-collapse-transition</div> -->
           </div>
         </el-collapse-transition>
+      </div>
+      <div class="close" v-show="flag === 2" @click="flag = 1">
+        <button class="button">取消</button>
       </div>
     </div>
     <div class="notice" @click="toNotice">
@@ -41,15 +44,15 @@
           <div class="chat-nickname">{{getNickname(chat)}}</div>
         </div>
       </div>
+      <div class="sign" v-if="flag === 2">用户信息</div>
       <div class="user-list" v-if="flag === 2">
-        用户信息
         <div class="user-box" @click="toOtherInfo(user.id)" v-for="user in users">
           <div class="user-icon"><img :src="user.icon || '/files/icons/default-icon.png'" alt=""></div>
           <div class="user-nickname">{{user.nickName}}</div>
         </div>
       </div>
+      <div class="sign" v-if="flag === 2">群聊信息</div>
       <div class="group-list" v-if="flag === 2">
-        群聊信息
         <div class="user-box" @click="toGroupInfo(group.id)" v-for="group in groups">
           <div class="user-icon"><img :src="group.icon || '/files/icons/default-icon.png'" alt=""></div>
           <div class="user-nickname">{{group.name}}</div>

@@ -90,7 +90,7 @@
                     groupObj.name = this.name;
                     groupObj.createId = this.user.id;
                     groupObj.number = 1;
-                    axios.post("/chat/makeGroup", groupObj)
+                    axios.post("/group/makeGroup", groupObj)
                         .then(({ data }) => {
                             console.log(data.id);
                             console.log("chat为：" + data);

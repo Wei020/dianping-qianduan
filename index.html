@@ -104,7 +104,9 @@
         addLike(b) {
           axios.put("/blog/like/" + b.id)
             .then(({ data }) => {
-              this.queryBlogById(b)
+              b.liked = data.liked;
+              b.isLike = data.isLike;
+              // this.queryBlogById(b)
             })
             .catch(err => {
               this.$message.error(err)
