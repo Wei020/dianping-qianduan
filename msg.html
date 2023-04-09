@@ -8,6 +8,7 @@
     <title>好享_haoxiang</title>
     <link rel="stylesheet" href="./css/element.css">
     <link href="./css/msg.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
 </head>
 
 <body>
@@ -17,36 +18,41 @@
             <div class="header-title">{{getNickname(chat)}}&nbsp;&nbsp;&nbsp;</div>
             <div class="header-more-btn" @click="toMore"><i class="el-icon-more"></i></div>
         </div>
-        <div class="msg-list" @scroll="onScroll" id="list">
-            <div class="msg-box" v-for="msg in records">
-                <div class="others" v-show="msg.fromId !== user.id">
-                    <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
-                    <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
-                    <div class="msg-icon" v-if="msg.type === 1"><img
-                            :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
-                    <div class="msg-video" v-if="msg.type === 2">
-                        <video width="320" height="240" controls="controls" autoplay="autoplay">
-                            <source :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
-                                type="video/mp4" />
-                        </video>
+        <div class="content">
+            <div class="msg-list" @scroll="onScroll" id="list">
+                <div class="msg-box" v-for="msg in records">
+                    <div class="others" v-show="msg.fromId !== user.id">
+                        <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
+                        <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
+                        <div class="msg-icon" v-if="msg.type === 1"><img
+                                :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
+                        <div class="msg-video" v-if="msg.type === 2">
+                            <video width="320" height="240" controls="controls" autoplay="autoplay">
+                                <source
+                                    :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
+                                    type="video/mp4" />
+                            </video>
+                        </div>
                     </div>
-                </div>
-                <div class="me" v-show="msg.fromId === user.id">
-                    <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
-                    <div class="msg-icon" v-if="msg.type === 1"><img
-                            :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
-                    <div class="msg-video" v-if="msg.type === 2">
-                        <video width="320" height="240" controls="controls" autoplay="autoplay">
-                            <source :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
-                                type="video/mp4" />
-                        </video>
+                    <div class="me" v-show="msg.fromId === user.id">
+                        <div class="msg-content" v-if="msg.type === 0" style="text-align: right;">{{msg.content}}</div>
+                        <div class="msg-icon" v-if="msg.type === 1"><img
+                                :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
+                        <div class="msg-video" v-if="msg.type === 2">
+                            <video width="320" height="240" controls="controls" autoplay="autoplay">
+                                <source
+                                    :src="msg.content || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
+                                    type="video/mp4" />
+                            </video>
+                        </div>
+                        <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
                     </div>
-                    <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
                 </div>
             </div>
         </div>
         <div class="send">
-            <el-input style="width: 70%" v-model="content"></el-input>
+            <!-- <el-input style="width: 70%" v-model="content"></el-input> -->
+            <textarea v-model="content"></textarea>
             <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
             <div class="upload-btn" style="width: 5%" @click="openFileDialog">
                 <i class="el-icon-picture-outline-round"></i>

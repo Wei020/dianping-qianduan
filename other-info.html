@@ -48,11 +48,13 @@
         <div class="name">{{user.nickName}}</div>
         <span>杭州</span>
       </div>
-      <div class="logout-btn" @click="follow" style="text-align: center">
-        {{followed ? "取消关注" : "关注"}}
-      </div>
-      <div class="chat-btn" @click="chat" style="text-align: center">
-        私信
+      <div class="btn">
+        <div class="logout-btn" @click="follow">
+          {{followed ? "取消关注" : "关注"}}
+        </div>
+        <div class="chat-btn" @click="chat">
+          私信
+        </div>
       </div>
     </div>
     <div class="introduce">

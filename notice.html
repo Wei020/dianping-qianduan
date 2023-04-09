@@ -20,7 +20,8 @@
         <div class="msg-list" @scroll="onScroll" id="list">
             <div class="msg-box" v-for="notice in records" @click="doNotice(notice)">
                 <div class="msg-content" v-if="notice.type === 0">{{notice.fromNickname}}申请加入{{notice.content}}</div>
-                <div class="notice-state">
+                <div class="msg-content" v-if="notice.type === 2">{{notice.content}}</div>
+                <div class="notice-state" v-if="notice.type === 0">
                     <i v-if="notice.fromId === user.id" class="el-icon-top-right"></i>
                     <i v-else class="el-icon-bottom-left"></i>
                     {{getState(notice)}}
@@ -119,6 +120,9 @@
                     // }
                 },
                 doNotice(notice) {
+                    if (notice.type === 2) {
+                        location.href = "other-info.html?id=" + notice.fromId;
+                    }
                     if (notice.fromId === this.user.id || notice.state === 1 || notice.state === 2) {
                         return;
                     }

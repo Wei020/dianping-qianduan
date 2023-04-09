@@ -20,22 +20,31 @@
     }
 
     .header {
-        height: 10%;
+        height: 30px;
         background-color: blue;
+        position: fixed;
+        z-index: 9;
     }
 
-    .back {
-        width: 30%;
-        height: 80%;
-        margin-left: 10%;
-        background-color: black;
+    .content {
+        height: 100%;
+        background-color: pink;
+        z-index: 0;
+        position: relative;
+    }
+
+    .foot {
+        height: 10px;
+        background-color: red;
+        position: fixed;
     }
 </style>
 
 <body>
     <div class="header">
-        <div class="back"></div>
     </div>
+    <div class="content"></div>
+    <div class="foot"></div>
 </body>
 
 </html>

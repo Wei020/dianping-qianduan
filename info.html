@@ -51,8 +51,10 @@
           更多信息
         </div>
       </div>
-      <div class="logout-btn" @click="logout">
-        退出登录
+      <div class="btn">
+        <div class="logout-btn" @click="logout">
+          退出登录
+        </div>
       </div>
     </div>
     <div class="introduce">
@@ -243,6 +245,9 @@
               this.$message.error
               b.liked++;
             })
+        },
+        toOtherInfo(id) {
+          location.href = "/other-info.html?id=" + id
         },
         onScroll(e) {
           let scrollTop = e.target.scrollTop;

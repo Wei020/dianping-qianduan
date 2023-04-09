@@ -71,9 +71,16 @@
     box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.04);
 }
 
-.logout-btn {
-    width: 18%;
+.btn {
+    width: 40%;
     margin-top: 8px;
+    height: 42px;
+    color: white;
+    padding: 0 2px;
+}
+
+.logout-btn {
+    width: 80%;
     height: 20px;
     line-height: 20px;
     color: white;
@@ -81,6 +88,7 @@
     border-radius: 3px;
     background-color: #f63;
     box-shadow: 0 1px 2px 1px rgba(0, 0, 0, 0.04);
+    text-align: center;
 }
 
 .introduce {

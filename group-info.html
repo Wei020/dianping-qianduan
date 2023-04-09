@@ -48,12 +48,11 @@
                 <div class="name">{{group.name}}</div>
                 <!-- <span>杭州</span> -->
             </div>
-            <div class="logout-btn" @click="follow" style="text-align: center">
-                {{followed ? "去聊天" : "申请加入"}}
+            <div class="btn">
+                <div class="logout-btn" @click="follow" style="text-align: center">
+                    {{followed ? "去聊天" : "申请加入"}}
+                </div>
             </div>
-            <!-- <div class="chat-btn" @click="chat" style="text-align: center">
-                私信
-            </div> -->
         </div>
         <div class="introduce">
             <span v-if="group.introduce">{{group.introduce}}</span>
