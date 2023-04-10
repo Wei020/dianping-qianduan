@@ -22,7 +22,8 @@
             <div class="msg-list" @scroll="onScroll" id="list">
                 <div class="msg-box" v-for="msg in records">
                     <div class="others" v-show="msg.fromId !== user.id">
-                        <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
+                        <div class="user-icon" @click="toOtherInfo(msg.fromId)"><img
+                                :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
                         <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
                         <div class="msg-icon" v-if="msg.type === 1"><img
                                 :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
@@ -52,12 +53,12 @@
         </div>
         <div class="send">
             <!-- <el-input style="width: 70%" v-model="content"></el-input> -->
-            <textarea v-model="content"></textarea>
+            <el-input class="input" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="content"></el-input>
             <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
-            <div class="upload-btn" style="width: 5%" @click="openFileDialog">
+            <div class="upload-btn" @click="openFileDialog">
                 <i class="el-icon-picture-outline-round"></i>
             </div>
-            <el-button style="width: 23%" @click="sendMsg(0)">发送</el-button>
+            <button @click="sendMsg(0)">发送</button>
         </div>
     </div>
     <script src="./js/vue.js"></script>
@@ -202,16 +203,23 @@
                 },
                 goBack() {
                     sessionStorage.removeItem("chat");
-                    history.back();
+                    location.href = "chat.html"
                 },
                 toMore() {
+                    let id = this.chat.toId;
+                    if (this.chat.toId === this.user.id) {
+                        id = this.chat.fromId;
+                    }
                     if (this.chat.type === 0) {
                         location.href = "group-info.html?id=" + this.chat.toId;
-                    } else if (this.chat.toId === this.user.id) {
+                    } else if (this.chat.toId === this.chat.fromId) {
                         location.href = "info.html";
                     } else {
-                        location.href = "/other-info.html?id=" + this.chat.toId;
+                        location.href = "/other-info.html?id=" + id;
                     }
+                },
+                toOtherInfo(id) {
+                    location.href = "/other-info.html?id=" + id
                 },
                 getNickname(chat) {
                     if (chat.fromNickname === this.user.nickName) {

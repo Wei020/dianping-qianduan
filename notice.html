@@ -7,7 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>好享_haoxiang</title>
     <link rel="stylesheet" href="./css/element.css">
-    <link href="./css/msg.css" rel="stylesheet">
+    <link href="./css/notice.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
 </head>
 
 <body>
@@ -17,14 +18,17 @@
             <div class="header-title">消息通知&nbsp;&nbsp;&nbsp;</div>
             <!-- <div class="header-more-btn" @click="toMore"><i class="el-icon-more"></i></div> -->
         </div>
-        <div class="msg-list" @scroll="onScroll" id="list">
-            <div class="msg-box" v-for="notice in records" @click="doNotice(notice)">
-                <div class="msg-content" v-if="notice.type === 0">{{notice.fromNickname}}申请加入{{notice.content}}</div>
-                <div class="msg-content" v-if="notice.type === 2">{{notice.content}}</div>
-                <div class="notice-state" v-if="notice.type === 0">
-                    <i v-if="notice.fromId === user.id" class="el-icon-top-right"></i>
-                    <i v-else class="el-icon-bottom-left"></i>
-                    {{getState(notice)}}
+        <div class="content">
+            <div class="msg-list" @scroll="onScroll" id="list">
+                <div class="msg-box" v-for="notice in records" @click="doNotice(notice)">
+                    <div class="msg-content" v-if="notice.type === 0">{{notice.fromNickname}}申请加入{{notice.content}}
+                    </div>
+                    <div class="msg-content" v-if="notice.type === 2 || notice.type === 3">{{notice.content}}</div>
+                    <div class="notice-state" v-if="notice.type === 0">
+                        <i v-if="notice.fromId === user.id" class="el-icon-top-right"></i>
+                        <i v-else class="el-icon-bottom-left"></i>
+                        {{getState(notice)}}
+                    </div>
                 </div>
             </div>
         </div>

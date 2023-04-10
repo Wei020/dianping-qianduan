@@ -5,6 +5,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    /* border-bottom: 2px solid #ff6633; */
 }
 
 .header-back-btn {
@@ -21,9 +22,8 @@
 }
 
 .content {
-    height: 88%;
+    height: 94%;
     width: 100%;
-    background-color: #eee;
     /* display: flex; */
 }
 
@@ -40,21 +40,12 @@
 .msg-box {
     width: 100%;
     /* height: 10%; */
+    height: 50px;
+    line-height: 50px;
     display: flex;
     flex-wrap: nowrap;
     justify-content: flex-start;
     font-size: medium;
-}
-
-.others {
-    display: flex;
-}
-
-.me {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-    justify-content: flex-end;
 }
 
 
@@ -90,49 +81,4 @@
     width: 100%;
     height: 100%;
     background-size: cover;
-}
-
-
-.send {
-    /* position: fixed; */
-    display: flex;
-    flex-wrap: nowrap;
-    width: 100%;
-    height: 6%;
-}
-
-.send .input {
-    height: 80%;
-    width: 80%;
-}
-
-.send .upload-btn {
-    height: 80%;
-    width: 5%;
-    text-align: center;
-    margin-top: 2%;
-}
-
-.send button {
-    height: 80%;
-    width: 15%;
-    text-align: center;
-    display: inline-block;
-    /* line-height: 1; */
-    white-space: nowrap;
-    cursor: pointer;
-    background: #FFF;
-    border: 1px solid #DCDFE6;
-    color: #606266;
-    text-align: center;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    outline: 0;
-    margin: 0;
-    -webkit-transition: .1s;
-    transition: .1s;
-    font-weight: 500;
-    /* padding: 12px 20px; */
-    font-size: 14px;
-    border-radius: 4px;
 }

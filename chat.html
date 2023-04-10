@@ -24,9 +24,9 @@
       <div class="create-btn" v-show="flag === 1" @click="show = !show">
         <i class="el-icon-circle-plus-outline"></i>
         <el-collapse-transition>
-          <div v-show="show">
+          <div class="menu" v-show="show">
             <div class="transition-box" @click="create">创建群聊</div>
-            <!-- <div class="transition-box">el-collapse-transition</div> -->
+            <!-- <div class="transition-box">搜用户/群</div> -->
           </div>
         </el-collapse-transition>
       </div>
