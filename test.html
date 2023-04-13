@@ -19,32 +19,33 @@
         height: 100%;
     }
 
-    .header {
-        height: 30px;
+    body {
+        display: flex;
+    }
+
+    .left {
+        width: 48%;
+        height: 40%;
+        background-color: aliceblue;
+    }
+
+    .right {
+        width: 48%;
+        height: 60%;
         background-color: blue;
-        position: fixed;
-        z-index: 9;
     }
 
-    .content {
-        height: 100%;
-        background-color: pink;
-        z-index: 0;
-        position: relative;
-    }
-
-    .foot {
-        height: 10px;
-        background-color: red;
-        position: fixed;
+    .ledown {
+        width: 48%;
+        height: 30%;
+        background-color: black;
     }
 </style>
 
 <body>
-    <div class="header">
-    </div>
-    <div class="content"></div>
-    <div class="foot"></div>
+    <div class="left"></div>
+    <div class="right"></div>
+    <div class="ledown"></div>
 </body>
 
 </html>

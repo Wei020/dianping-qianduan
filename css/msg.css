@@ -44,17 +44,21 @@
     flex-wrap: nowrap;
     justify-content: flex-start;
     font-size: medium;
+    margin-bottom: 5px;
 }
 
 .others {
     display: flex;
+    width: 70%;
+    /* padding: 0 1px; */
 }
 
 .me {
     display: flex;
-    flex-wrap: wrap;
-    width: 100%;
+    /* flex-wrap: wrap; */
+    width: 70%;
     justify-content: flex-end;
+    margin-left: 30%;
 }
 
 
@@ -64,15 +68,25 @@
 }
 
 .user-icon img {
-    width: 100%;
-    height: 100%;
-    background-size: cover;
+    width: 34px;
+    height: 34px;
+    background-size: auto;
 }
 
 .msg-content {
-    left: 35px;
-    height: 34px;
-    width: 70%;
+    background-color: #448bc6;
+    border: #1f366a;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+.me .user-icon {
+    margin-left: 1px;
+}
+
+.others .msg-content {
+    margin-left: 1px;
 }
 
 
@@ -82,14 +96,14 @@
 }
 
 .msg-icon {
-    width: 50px;
-    height: 80px;
+    width: 100%;
 }
 
 .msg-icon img {
     width: 100%;
-    height: 100%;
-    background-size: cover;
+    /* height: 100%; */
+    /* background-size: cover; */
+    background-size: auto;
 }
 
 

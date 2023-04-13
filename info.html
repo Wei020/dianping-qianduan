@@ -97,12 +97,27 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="卡券" name="4">
-          <!-- <div class="blog-list" @scroll="onScroll">
-            <div class="user-box" @click="toOtherInfo(f.id)" v-for="f in fans" :key="f.id">
-              <div class="user-icon"><img :src="f.icon || '/files/icons/default-icon.png'" alt=""></div>
-              <div class="user-nickname">{{f.nickName}}</div>
+          <div class="voucher-list" @scroll="onScroll">
+            <div class="voucher-box" v-for="v in vouchers" :key="v.id">
+              <div class="voucher-circle">
+                <div class="voucher-b"></div>
+                <div class="voucher-b"></div>
+                <div class="voucher-b"></div>
+              </div>
+              <div class="voucher-left">
+                <div class="voucher-title">{{v.title}}</div>
+                <div class="voucher-subtitle">{{v.subTitle}}</div>
+                <div class="voucher-price">
+                  <div>￥ {{util.formatPrice(v.payValue)}}</div> <span>{{(v.payValue*10)/v.actualValue}}折</span>
+                </div>
+              </div>
+              <div class="voucher-state" v-if="v.type === 0"></div>
+              <div class="voucher-state" v-else-if="v.type === 1">
+                <div class="state" v-if="isEnd(v)">已过期</div>
+                <div class="end-time" v-if="!isEnd(v)">{{formatTime(v)}}</div>
+              </div>
             </div>
-          </div> -->
+          </div>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -118,12 +133,14 @@
     const app = new Vue({
       el: "#app",
       data: {
+        util,
         user: "",
         activeName: "1",
         info: {},
         blogs: [],
         comments: [],
         fans: [],
+        vouchers: [],
         current: 1,
         city: "",
         // blogs2: [], // 关注的人的播客
@@ -204,6 +221,8 @@
             this.queryMyComments();
           } else if (r.name === '3') {
             this.queryMyFans();
+          } else if (r.name === '4') {
+            this.queryMyVoucher();
           }
         },
         queryMyComments() {
@@ -221,6 +240,16 @@
             .then(({ data }) => {
               this.fans = data;
               console.log(this.fans);
+            })
+            .catch(err => {
+              this.$message.error(err)
+            })
+        },
+        queryMyVoucher() {
+          axios.post("/voucher/of/" + this.user.id)
+            .then(({ data }) => {
+              this.vouchers = data;
+              console.log(this.vouchers);
             })
             .catch(err => {
               this.$message.error(err)
@@ -248,6 +277,25 @@
         },
         toOtherInfo(id) {
           location.href = "/other-info.html?id=" + id
+        },
+        formatTime(v) {
+          let b = new Date(v.beginTime);
+          let e = new Date(v.endTime);
+          let endMonth = e.getMonth() + 1;
+          return b.getMonth() + 1 + "月" + b.getDate() + "日 "
+            + b.getHours() + ":" + this.formatMinutes(b.getMinutes())
+            + " ~ " + endMonth + "月" + e.getDate() + "日 "
+            + e.getHours() + ":" + this.formatMinutes(e.getMinutes());
+        },
+        formatMinutes(m) {
+          if (m < 10) m = "0" + m
+          return m;
+        },
+        isNotBegin(v) {
+          return new Date(v.beginTime).getTime() > new Date().getTime();
+        },
+        isEnd(v) {
+          return new Date(v.endTime).getTime() < new Date().getTime();
         },
         onScroll(e) {
           let scrollTop = e.target.scrollTop;

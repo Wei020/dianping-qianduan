@@ -19,11 +19,13 @@
             <div class="header-more-btn" @click="toMore"><i class="el-icon-more"></i></div>
         </div>
         <div class="content">
-            <div class="msg-list" @scroll="onScroll" id="list">
+            <div class="msg-list" @scroll="onScroll">
                 <div class="msg-box" v-for="msg in records">
-                    <div class="others" v-show="msg.fromId !== user.id">
+                    <div class="others" v-if="msg.fromId !== user.id">
                         <div class="user-icon" @click="toOtherInfo(msg.fromId)"><img
-                                :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
+                                :src="chat.fromIcon === user.icon ? chat.toIcon : chat.fromIcon || '/files/icons/default-icon.png'"
+                                alt="">
+                        </div>
                         <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
                         <div class="msg-icon" v-if="msg.type === 1"><img
                                 :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
@@ -35,8 +37,8 @@
                             </video>
                         </div>
                     </div>
-                    <div class="me" v-show="msg.fromId === user.id">
-                        <div class="msg-content" v-if="msg.type === 0" style="text-align: right;">{{msg.content}}</div>
+                    <div class="me" v-else>
+                        <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
                         <div class="msg-icon" v-if="msg.type === 1"><img
                                 :src="msg.content || '/imgs/icons/default-icon.png'" alt=""></div>
                         <div class="msg-video" v-if="msg.type === 2">
@@ -46,14 +48,19 @@
                                     type="video/mp4" />
                             </video>
                         </div>
-                        <div class="user-icon"><img :src="msg.fromIcon || '/imgs/icons/default-icon.png'" alt=""></div>
+                        <div class="user-icon"><img
+                                :src="chat.fromIcon === user.icon ? chat.fromIcon : chat.toIcon || '/files/icons/default-icon.png'"
+                                alt="">
+                        </div>
                     </div>
                 </div>
+                <div class="bottom" id="bottom"></div>
             </div>
         </div>
         <div class="send">
             <!-- <el-input style="width: 70%" v-model="content"></el-input> -->
-            <el-input class="input" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="content"></el-input>
+            <el-input class="input" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="content"
+                resize="none" maxlength="100"></el-input>
             <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
             <div class="upload-btn" @click="openFileDialog">
                 <i class="el-icon-picture-outline-round"></i>
@@ -247,8 +254,11 @@
             watch: {
                 records: {
                     handler() {
-                        var element = document.getElementById("list");
-                        element.scrollTop = element.scrollHeight;
+                        console.log("执行了");
+                        var element = document.getElementById("bottom");
+                        setTimeout(() => {
+                            element.scrollIntoView();
+                        })
                     }
                 }
             }
