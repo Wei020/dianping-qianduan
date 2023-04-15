@@ -122,21 +122,27 @@
 .send .input {
     height: 80%;
     width: 80%;
+    margin-top: 1%;
+}
+
+.send .input:focus {
+    outline: none;
 }
 
 .send .upload-btn {
-    height: 80%;
+    /* height: 80%; */
     width: 5%;
     text-align: center;
-    margin-top: 2%;
+    margin-top: 3%;
 }
 
 .send button {
     height: 80%;
     width: 15%;
+    margin-top: 1%;
     text-align: center;
     display: inline-block;
-    /* line-height: 1; */
+    line-height: 1;
     white-space: nowrap;
     cursor: pointer;
     background: #FFF;
@@ -146,7 +152,7 @@
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
     outline: 0;
-    margin: 0;
+    /* margin: 0; */
     -webkit-transition: .1s;
     transition: .1s;
     font-weight: 500;

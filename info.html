@@ -65,7 +65,7 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="笔记" name="1">
           <div class="blog-list" @scroll="onScroll">
-            <div v-for="b in blogs" :key="b.id" class="blog-item">
+            <div v-for="b in blogs" :key="b.id" class="blog-item" @click="toBlogDetail(b.id)">
               <div class="blog-img"><img :src="b.images.split(',')[0]" alt=""></div>
               <div class="blog-info">
                 <div class="blog-title">{{b.title}}</div>
@@ -281,6 +281,9 @@
         },
         toOtherInfo(id) {
           location.href = "/other-info.html?id=" + id
+        },
+        toBlogDetail(id) {
+          location.href = "/blog-detail.html?id=" + id
         },
         formatTime(v) {
           let b = new Date(v.beginTime);
