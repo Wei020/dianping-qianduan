@@ -66,7 +66,8 @@
                             //接收到的消息数据
                             let receiveMsg = JSON.parse(msg.body);
                             console.log("收到消息" + receiveMsg);
-                            this.records = this.records.concat(receiveMsg);
+                            // this.records = this.records.concat(receiveMsg);
+                            this.records.unshift(receiveMsg);
                         })
                     });
                 },
@@ -127,6 +128,9 @@
                     if (notice.type === 2) {
                         location.href = "other-info.html?id=" + notice.fromId;
                     }
+                    if (notice.type === 3) {
+                        location.href = "/blog-detail.html?id=" + notice.blogId;
+                    }
                     if (notice.fromId === this.user.id || notice.state === 1 || notice.state === 2) {
                         return;
                     }
@@ -166,14 +170,6 @@
                     }
                 }
             },
-            watch: {
-                records: {
-                    handler() {
-                        var element = document.getElementById("list");
-                        element.scrollTop = element.scrollHeight;
-                    }
-                }
-            }
         })
     </script>
 </body>

@@ -37,6 +37,10 @@
     align-content: flex-start;
 }
 
+/* .msg-list .msg-box:first-child {
+    border-top: 2px solid #ff6633;
+} */
+
 .msg-box {
     width: 100%;
     /* height: 10%; */

@@ -120,22 +120,23 @@
     margin-top: 8px;
     width: 34px;
     height: 34px;
+    border-radius: 5px;
 }
 
 .user-icon img {
     width: 100%;
     height: 100%;
+    border-radius: 5px;
     background-size: cover;
 }
 
 .chat-nickname {
-    left: 35px;
-    height: 34px;
+    margin-left: 1px;
     width: auto;
+
 }
 
 .user-nickname {
-    left: 35px;
-    height: 34px;
+    margin-left: 1px;
     width: auto;
 }

@@ -33,7 +33,7 @@
           <el-input placeholder="请输入手机号" v-model="form.phone">
           </el-input>
           <div style="height: 5px"></div>
-          <el-input placeholder="请输入密码" v-model="form.password">
+          <el-input placeholder="请输入密码" v-model="form.password" show-password>
           </el-input>
           <div style="text-align: center; color: #8c939d;margin: 5px 0"><a href="find-pass.html">忘记密码</a></div>
           <el-button @click="login" style="width: 100%; background-color:#f63; color: #fff;">登录</el-button>
@@ -71,6 +71,14 @@
       },
       methods: {
         login() {
+          if (!this.form.phone) {
+            this.$message.error("手机号不能为空！");
+            return;
+          }
+          if (!this.form.password) {
+            this.$message.error("密码不能为空！");
+            return;
+          }
           if (!this.radio) {
             this.$message.error("请先确认阅读用户协议！");
             return;

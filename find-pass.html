@@ -30,9 +30,9 @@
               :disabled="disabled">{{codeBtnMsg}}</el-button>
           </div>
           <div style="height: 5px"></div>
-          <el-input style="width: 100%" placeholder="请输入新密码" v-model="form.password"></el-input>
+          <el-input style="width: 100%" placeholder="请输入新密码" v-model="form.password" show-password></el-input>
           <div style="height: 5px"></div>
-          <el-input style="width: 100%" placeholder="请再次输入密码" v-model="form.password1"></el-input>
+          <el-input style="width: 100%" placeholder="请再次输入密码" v-model="form.password1" show-password></el-input>
           <div style="height: 5px"></div>
           <el-input placeholder="请输入验证码" v-model="form.code"></el-input>
           <el-button @click="submit" style="width: 100%; background-color:#f63; color: #fff;">提交</el-button>

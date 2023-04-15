@@ -210,7 +210,8 @@
           axios.post("/user/logout")
             .then(() => {
               // 清理session
-              sessionStorage.removeItem("token")
+              sessionStorage.removeItem("token");
+              sessionStorage.removeItem("userInfo")
               // 跳转
               location.href = "/"
             })

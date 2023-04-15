@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>好享_haoxiang</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="./css/element.css">
+    <link href="./css/info-edit.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+            <div class="header-title">{{getTitile(type)}}&nbsp;&nbsp;&nbsp;</div>
+            <div class="header-submit-btn" @click="submit(type)">
+                <button class="btn">确定</button>
+            </div>
+        </div>
+        <div class="body">
+            <input type="text" v-if="type === '1'" v-model="user.nickName" placeholder="请输入昵称" maxlength="10">
+            <textarea v-else-if="type === '2'" v-model="info.introduce" placeholder="简短介绍下自己吧~" rows="3"
+                maxlength="30"></textarea>
+            <div class="sex" v-else-if="type === '3'">
+                <div class="box" @click="info.gender = 1">
+                    <span>男</span>
+                    <i class="el-icon-check" v-show="info.gender === 1"></i>
+                </div>
+                <div class="box" @click="info.gender = 2">
+                    <span>女</span>
+                    <i class="el-icon-check" v-show="info.gender === 2"></i>
+                </div>
+            </div>
+            <template v-else-if="type === '5'">
+                <div class="birthday">
+                    <span class="demonstration"></span>
+                    <el-date-picker class="block" v-model="info.birthday" type="date" value-format="yyyy-MM-dd"
+                        placeholder="选择日期">
+                    </el-date-picker>
+                </div>
+            </template>
+            <div class="icon" v-else-if="type === '0'">
+                <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
+                <div class="upload-btn">
+                    <img :src="user.icon || '/files/icons/default-icon.png'" alt="">
+                    <i class="el-icon-picture-outline-round" @click="openFileDialog"></i>
+                </div>
+                <!-- <div class="pic-list">
+                    <div class="pic-box" v-for="(f,i) in fileList" :key="i">
+                      <img :src="f" alt="">
+                      <i class="el-icon-close" @click="deletePic(i)"></i>
+                    </div> 
+                  </div> -->
+            </div>
+        </div>
+    </div>
+    <script src="./js/vue.js"></script>
+    <script src="./js/axios.min.js"></script>
+    <!-- 引入组件库 -->
+    <script src="./js/element.js"></script>
+    <script src="./js/common.js"></script>
+    <script src="./js/footer.js"></script>
+    <script>
+
+        const app = new Vue({
+            el: "#app",
+            data: {
+                user: "",
+                info: {},
+                type: "",
+                fileList: []
+            },
+            created() {
+                let type = util.getUrlParam("type");
+                this.type = type;
+                this.checkLogin();
+            },
+            methods: {
+                checkLogin() {
+                    // 查询用户信息
+                    axios.get("/user/me")
+                        .then(({ data }) => {
+                            this.user = data;
+                            this.info = JSON.parse(sessionStorage.getItem("userInfo")) || {};
+                            console.log(this.info);
+                        })
+                        .catch(err => {
+                            this.$message.error(err);
+                            setTimeout(() => location.href = "login.html", 1000)
+                        })
+                },
+                goBack() {
+                    history.back();
+                },
+                submit(type) {
+                    if (type === '1' || type === '0') {
+                        axios.post("/user/edit", this.user)
+                            .then(resp => location.href = "/info-more.html")
+                            .catch(this.$message.error)
+                    } else if (type === '2' || type === '3' || type === '4' || type === '5') {
+                        axios.post("/user/infoEdit", this.info)
+                            .then(resp => {
+                                sessionStorage.setItem("userInfo", JSON.stringify(this.info))
+                                location.href = "/info-more.html";
+                            })
+                            .catch(this.$message.error)
+                    }
+                },
+                openFileDialog() {
+                    this.$refs.fileInput.click();
+                },
+                fileSelected() {
+                    let file = this.$refs.fileInput.files[0];
+                    let formData = new FormData();
+                    formData.append("file", file);
+                    const config = {
+                        headers: { "Content-Type": "multipart/form-data;boundary=" + new Date().getTime() }
+                    };
+                    axios
+                        .post("/upload/file", formData, config)
+                        .then(({ data }) => {
+                            if (this.fileList[0] !== null)
+                                this.fileList.splice(0, 1)
+                            this.fileList.push('/files' + data.fileName)
+                            console.log('this.user.icon')
+                            this.user.icon = this.fileList[0]
+                            console.log('this.user.icon')
+                        })
+                        .catch(this.$message.error);
+                },
+                deletePic(i) {
+                    axios.get("/upload/picture/delete?name=" + this.fileList[i])
+                        .then(() => this.fileList.splice(i, 1))
+                        .catch(this.$message.error)
+                },
+                getTitile(type) {
+                    if (this.type === '3') {
+                        return "设置性别";
+                    } else if (this.type === '4') {
+                        return "设置城市";
+                    } else if (this.type === '5') {
+                        return "设置生日";
+                    } else if (this.type === '1') {
+                        return "设置昵称";
+                    } else if (this.type === '2') {
+                        return "个人简介";
+                    } else if (this.type === '0') {
+                        return "设置头像";
+                    }
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
