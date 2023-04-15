@@ -111,8 +111,11 @@
                   <div>￥ {{util.formatPrice(v.payValue)}}</div> <span>{{(v.payValue*10)/v.actualValue}}折</span>
                 </div>
               </div>
-              <div class="voucher-state" v-if="v.type === 0"></div>
+              <div class="voucher-state" v-if="v.type === 0">
+                <div class="shop-name">{{v.shopName}}</div>
+              </div>
               <div class="voucher-state" v-else-if="v.type === 1">
+                <div class="shop-name">{{v.shopName}}</div>
                 <div class="state" v-if="isEnd(v)">已过期</div>
                 <div class="end-time" v-if="!isEnd(v)">{{formatTime(v)}}</div>
               </div>

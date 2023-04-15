@@ -375,6 +375,11 @@
     margin: 10px 0;
 }
 
+/* .shop-name {
+    width: 90%;
+    padding: 5px 0;
+} */
+
 .voucher-circle {
     display: flex;
     flex-direction: column;
@@ -402,6 +407,11 @@
 .voucher-subtitle,
 .voucher-price {
     padding: 5px 0;
+}
+
+.shop-name {
+    font-size: 15px;
+    text-align: right;
 }
 
 .voucher-title {

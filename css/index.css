@@ -18,6 +18,15 @@
     width: 70%;
 }
 
+.down,
+.up {
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+}
+
+
+
 .type-list {
     height: 25%;
     display: flex;
@@ -49,7 +58,17 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
-    height: 60%;
+    height: calc(60% - 20px);
+    overflow-y: auto;
+}
+
+.blog-list1 {
+    background-color: #eee;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    height: calc(85% - 20px);
     overflow-y: auto;
 }
 

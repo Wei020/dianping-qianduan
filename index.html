@@ -28,13 +28,15 @@
       </div>
       <div class="header-icon" @click="toPage(4)"><i class="el-icon-user"></i></div>
     </div>
-    <div class="type-list">
+    <div class="down" v-if="show === false" @click="show = true"><i class="el-icon-arrow-down"></i></div>
+    <div class="type-list" v-show="show === true">
       <div class="type-box" v-for="t in types" :key="t.id" @click="toShopList(t.id, t.name)">
         <div class="type-view"><img :src="'/files/' + t.icon" alt=""></div>
         <div class="type-text">{{t.name}}</div>
       </div>
     </div>
-    <div class="blog-list" @scroll="onScroll">
+    <div class="up" v-if="show === true" @click="show = false"><i class="el-icon-arrow-up"></i></div>
+    <div class="blog-list" @scroll="onScroll" id="blog-list">
       <div class="blog-box" v-for="b in blogs" :key="b.id">
         <div class="blog-img" @click="toBlogDetail(b)"><img :src="b.img" alt=""></div>
         <div class="blog-title">{{b.title}}</div>
@@ -70,7 +72,8 @@
         types: [], // 类型列表
         blogs: [], // 播客列表
         current: 1,// blog的页码
-        city: ""
+        city: "",
+        show: true
       },
       created() {
         // 查询类型
@@ -141,6 +144,21 @@
         },
         toBlogDetail(b) {
           location.href = "/blog-detail.html?id=" + b.id
+        }
+      },
+      watch: {
+        show: {
+          handler() {
+            console.log("执行了");
+            var element = window.document.getElementById("blog-list");
+            if (this.show === true) {
+              // element.style.height = "cal(60% - 20px)";
+              element.className = "blog-list";
+            } else {
+              // element.style.height = "cal(85% - 20px)";
+              element.className = "blog-list1";
+            }
+          }
         }
       }
     })
