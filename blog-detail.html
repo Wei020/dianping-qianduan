@@ -28,8 +28,17 @@
   <div id="app">
     <div class="header">
       <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
-      <div class="header-title"></div>
-      <div class="header-share">...</div>
+      <div class="header-title">博客详情</div>
+      <div class="header-more-btn">
+        <i class="el-icon-circle-plus-outline" v-show="user.id == blog.userId" @click="show = !show"></i>
+        <i class="el-icon-share" v-show="user.id != blog.userId" @click="shareBlog"></i>
+        <el-collapse-transition>
+          <div class="menu" v-show="show">
+            <div class="transition-box" @click="deleteBlog">删除博客</div>
+            <div class="transition-box" v-show="user.id == blog.userId" @click="editBlog">编辑博客</div>
+          </div>
+        </el-collapse-transition>
+      </div>
     </div>
     <div style="height: 85%; overflow-y: scroll; overflow-x: hidden">
       <div class="blog-info-box" ref="swiper" @touchstart="moveStart" @touchmove="moving" @touchend="moveEnd">
@@ -39,14 +48,14 @@
       </div>
       <div class="basic">
         <div class="basic-icon" @click="toOtherInfo">
-          <img :src="blog.icon || '/imgs/icons/default-icon.png'" alt="">
+          <img :src="blog.icon || '/files/icons/default-icon.png'" alt="">
         </div>
         <div class="basic-info">
           <div class="name">{{blog.name}}</div>
           <span class="time">{{formatTime(new Date(blog.createTime))}}</span>
         </div>
         <div style="width: 20%">
-          <div class="logout-btn" @click="follow" v-show="!user || user.id !== blog.userId ">
+          <div class="logout-btn" @click="follow" v-show="!user || user.id != blog.userId ">
             {{followed ? '取消关注' : '关注'}}
           </div>
         </div>
@@ -79,7 +88,7 @@
         </div>
         <div class="zan-list">
           <div class="user-icon-mini" v-for="u in likes" :key="u.id">
-            <img :src="u.icon || '/imgs/icons/default-icon.png'" alt="">
+            <img :src="u.icon || '/files/icons/default-icon.png'" alt="">
           </div>
           <div style="margin-left:10px;text-align: center;line-height: 24px;">{{blog.liked}}人点赞</div>
         </div>
@@ -93,7 +102,7 @@
         <div class="comment-list">
           <div class="comment-box" v-for="item in items" :key="item.id">
             <div class="comment-icon">
-              <img :src="item.user.icon || '/imgs/icons/default-icon.png'" alt="">
+              <img :src="item.user.icon || '/files/icons/default-icon.png'" alt="">
             </div>
             <div class="comment-info">
               <div class="comment-user">{{item.user.nickName}} <span>Lv5</span></div>
@@ -118,8 +127,9 @@
                   src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
                   alt="">
             </div> -->
-              <div>
+              <div class="comment-more">
                 浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5
+                <i class="el-icon-delete" v-if="item.user.id == user.id" @click="deleteComment(item)"></i>
               </div>
             </div>
           </div>
@@ -190,7 +200,8 @@
         sensitivity: 60,
         resistance: 0.3,
         content: "",
-        isShow: 0
+        isShow: 0,
+        show: false
       },
       created() {
         let id = util.getUrlParam("id");
@@ -434,6 +445,49 @@
               console.log(err);
               this.$message.error(err)
             });
+        },
+        deleteBlog() {
+          this.$confirm('是否确定删除该博客?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            axios.post("/blog/delete/" + this.blog.id)
+              .then(({ data }) => {
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+                location.href = "index.html";
+              })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消删除'
+            });
+          });
+        },
+        editBlog() {
+          sessionStorage.setItem("blog", JSON.stringify(this.blog));
+          location.href = "blog-edit.html";
+        },
+        shareBlog() {
+          let blog = this.blog;
+          blog.userId = this.user.id;
+          blog.id = null;
+          blog.images = this.blog.images.join(",");
+          axios.post("/blog", blog)
+            .then(resp => location.href = "/info.html")
+            .catch(this.$message.error)
+        },
+        deleteComment(item) {
+          axios.post("/blog-comments/delete/" + item.id)
+            .then(({ data }) => {
+              if (data) {
+                this.queryBlogComments(this.blog.id);
+              }
+            })
+            .catch(this.$message.error)
         }
       }
     })

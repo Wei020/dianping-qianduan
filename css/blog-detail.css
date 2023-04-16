@@ -37,13 +37,30 @@
     font-family: Hiragino Sans GB, Arial, Helvetica, "\5B8B\4F53", sans-serif;
 }
 
-.header-share {
+.header-more-btn {
     width: 10%;
     text-align: center;
     font-size: 18px;
     color: #82848a;
     font-weight: bold;
     font-family: Hiragino Sans GB, Arial, Helvetica, "\5B8B\4F53", sans-serif;
+}
+
+.menu {
+    position: fixed;
+    top: 7%;
+    right: 2px;
+    width: 20%;
+    border-radius: 5%;
+    background-color: rgb(30, 121, 113);
+    border-radius: 5%;
+    color: white;
+}
+
+.transition-box {
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
 }
 
 .blog-divider {
@@ -279,4 +296,8 @@
     width: 92px;
     border-radius: 5px;
     margin-right: 5px;
+}
+
+.comment-more i {
+    padding-left: 20px;
 }

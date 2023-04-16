@@ -60,7 +60,7 @@
         <div class="send">
             <!-- <el-input style="width: 70%" v-model="content"></el-input> -->
             <el-input class="input" type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="content"
-                resize="none" maxlength="100"></el-input>
+                resize="none" maxlength="100" outline="none"></el-input>
             <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
             <div class="upload-btn" @click="openFileDialog">
                 <i class="el-icon-picture-outline-round"></i>

@@ -160,6 +160,28 @@
     margin-bottom: 10px;
 }
 
+.comment-item {
+    padding: 10px;
+    width: 90%;
+    box-shadow: 1px 1px 4px 1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    background-color: #bbf2e8;
+}
+
+.comment-info {
+    width: 90%;
+    margin-left: 10px;
+    margin-bottom: 2px;
+}
+
+.item {
+    display: flex;
+    width: 90%;
+    background-color: white;
+    box-shadow: 1px 1px 4px 1px white;
+}
+
+/*达人探店列表*/
 .blog-list {
     height: 100%;
     width: 100%;
@@ -167,6 +189,7 @@
     flex-wrap: wrap;
     justify-content: space-around;
     overflow-y: auto;
+    align-content: flex-start;
 }
 
 /* .blog-box{
@@ -194,6 +217,9 @@
 
 .blog-title {
     line-height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .blog-liked {
@@ -249,17 +275,6 @@
     text-align: center;
 }
 
-/*达人探店列表*/
-.blog-list {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    overflow-y: auto;
-    align-content: flex-start;
-}
-
 .blog-box {
     width: 90%;
     background-color: #fff;
@@ -313,6 +328,7 @@
     margin-right: 2px;
 }
 
+
 .user-box {
     width: 100%;
     height: 50px;
@@ -322,9 +338,13 @@
     border-bottom-width: 1px;
     border-bottom-style: solid; */
     line-height: 50px;
+    box-shadow: 0 3px 4px 1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1px;
+
 }
 
 .user-icon {
+    margin-left: 1px;
     margin-top: 8px;
     width: 34px;
     height: 34px;
@@ -337,7 +357,7 @@
 }
 
 .user-nickname {
-    left: 35px;
+    margin-left: 1px;
     height: 34px;
     width: auto;
 }

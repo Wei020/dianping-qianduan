@@ -75,16 +75,18 @@
             </div>
           </div>
         </el-tab-pane>
-        <el-tab-pane label="评价" name="2">
+        <el-tab-pane label="评论" name="2">
           <div class="blog-list" @scroll="onScroll">
-            <div v-for="c in comments" :key="c.id" class="blog-item">
-              <div class="blog-img"><img :src="c.blog.images.split(',')[0]" alt=""></div>
-              <div class="blog-info">
-                <div class="blog-title">{{c.blog.title}}</div>
-                <!-- <div class="blog-liked"><img src="/files/thumbup.png" alt=""> {{b.liked}}</div>
-                <div class="blog-comments"><i class="el-icon-chat-dot-round"></i> {{b.comments}}</div> -->
-              </div>
+            <div v-for="c in comments" :key="c.id" class="comment-item">
               <div class="comment-info">{{c.content}}</div>
+              <div class="item">
+                <div class="blog-img"><img :src="c.blog.images.split(',')[0]" alt=""></div>
+                <div class="blog-info">
+                  <div class="blog-title">{{c.blog.title}}</div>
+                  <div class="blog-liked"><img src="/files/thumbup.png" alt=""> {{c.blog.liked}}</div>
+                  <div class="blog-comments"><i class="el-icon-chat-dot-round"></i> {{c.blog.comments}}</div>
+                </div>
+              </div>
             </div>
           </div>
         </el-tab-pane>

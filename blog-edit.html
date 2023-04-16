@@ -94,6 +94,8 @@
         }
       },
       created() {
+        let blog = JSON.parse(sessionStorage.getItem("blog")) || {};
+        this.prepare(blog);
         this.checkLogin();
         this.queryShops();
       },
@@ -122,6 +124,7 @@
           axios.post("/blog", data)
             .then(resp => location.href = "/info.html")
             .catch(this.$message.error)
+          sessionStorage.removeItem("blog");
         },
         openFileDialog() {
           this.$refs.fileInput.click();
@@ -165,6 +168,28 @@
         },
         handleRemove(file) {
           console.log(file);
+        },
+        queryShopById(shopId) {
+          axios.get("/shop/" + shopId)
+            .then(({ data }) => {
+              data.image = data.images.split(",")[0]
+              this.selectedShop = data;
+              this.shopName = data.name;
+            })
+            .catch(this.$message.error)
+        },
+        prepare(blog) {
+          if (blog == {}) {
+            console.log("blog为空");
+            return;
+          } else {
+            this.fileList = blog.images;
+            this.params.title = blog.title;
+            this.params.content = blog.content;
+            if (blog.shopId !== undefined) {
+              this.queryShopById(blog.shopId);
+            }
+          }
         }
       },
 
