@@ -22,11 +22,11 @@
     <div class="search-bar">
       <div class="city-btn">{{city || "定位中..."}} <i class="el-icon-arrow-down"></i></div>
       <div class="search-input">
-        <el-input size="mini" placeholder="请输入商户名、地点">
+        <el-input size="mini" placeholder="搜索博客" v-model="condition">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
         </el-input>
       </div>
-      <div class="header-icon" @click="toPage(4)"><i class="el-icon-user"></i></div>
+      <div class="header-icon" @click="findBlogs"><i class="el-icon-search"></i></div>
     </div>
     <div class="down" v-if="show === false" @click="show = true"><i class="el-icon-arrow-down"></i></div>
     <div class="type-list" v-show="show === true">
@@ -37,12 +37,13 @@
     </div>
     <div class="up" v-if="show === true" @click="show = false"><i class="el-icon-arrow-up"></i></div>
     <div class="blog-list" @scroll="onScroll" id="blog-list">
-      <div class="blog-box" v-for="b in blogs" :key="b.id">
-        <div class="blog-img" @click="toBlogDetail(b)"><img :src="b.img" alt=""></div>
+      <div class="blog-box" v-for="b in blogs" :key="b.id" @click="toBlogDetail(b)">
+        <div class="blog-img"><img :src="b.img" alt=""></div>
         <div class="blog-title">{{b.title}}</div>
         <div class="blog-foot">
           <div class="blog-user-icon"><img :src="b.icon || '/imgs/icons/default-icon.png'" alt=""></div>
           <div class="blog-user-name">{{b.name}}</div>
+          <div class="blog-comments"><i class="el-icon-chat-dot-round"></i> {{b.comments}}</div>
           <div class="blog-liked" @click="addLike(b)">
             <svg t="1646634642977" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
               p-id="2187" width="14" height="14">
@@ -73,6 +74,7 @@
         blogs: [], // 播客列表
         current: 1,// blog的页码
         city: "",
+        condition: "",
         show: true
       },
       created() {
@@ -123,7 +125,23 @@
             })
             .catch(() => {
               this.$message.error
-              b.liked++;
+              // b.liked++;
+            })
+        },
+        findBlogs() {
+          if (this.condition == "") {
+            this.blogs = [];
+            this.queryHotBlogsScroll();
+            return;
+          }
+          axios.post("/blog/find?condition=" + this.condition)
+            .then(({ data }) => {
+              data.forEach(b => b.img = b.images.split(",")[0]);
+              this.blogs = data;
+              this.condition = "";
+            })
+            .catch(err => {
+              this.$message.error(err)
             })
         },
         onScroll(e) {

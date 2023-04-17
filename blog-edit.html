@@ -164,6 +164,7 @@
             })
         },
         goBack() {
+          sessionStorage.removeItem("blog");
           history.back();
         },
         handleRemove(file) {
@@ -179,10 +180,11 @@
             .catch(this.$message.error)
         },
         prepare(blog) {
-          if (blog == {}) {
+          if (blog.title === undefined) {
             console.log("blog为空");
             return;
           } else {
+            console.log("blog不为空");
             this.fileList = blog.images;
             this.params.title = blog.title;
             this.params.content = blog.content;
@@ -192,7 +194,6 @@
           }
         }
       },
-
     })
   </script>
 </body>

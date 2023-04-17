@@ -1,0 +1,22 @@
+.header {
+    width: 100%;
+    line-height: 40px;
+    height: 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #ff6633;
+}
+
+.header-back-btn {
+    width: 10%;
+    color: #ff6633;
+    font-size: 22px;
+}
+
+.header-title {
+    width: 80%;
+    text-align: center;
+    font-size: 18px;
+    font-family: Hiragino Sans GB, Arial, Helvetica, "\5B8B\4F53", sans-serif;
+}

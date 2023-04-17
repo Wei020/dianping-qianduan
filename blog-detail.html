@@ -30,7 +30,7 @@
       <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
       <div class="header-title">博客详情</div>
       <div class="header-more-btn">
-        <i class="el-icon-circle-plus-outline" v-show="user.id == blog.userId" @click="show = !show"></i>
+        <i class="el-icon-more" v-show="user.id == blog.userId" @click="show = !show"></i>
         <i class="el-icon-share" v-show="user.id != blog.userId" @click="shareBlog"></i>
         <el-collapse-transition>
           <div class="menu" v-show="show">
