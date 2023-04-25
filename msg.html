@@ -15,16 +15,17 @@
     <div id="app">
         <div class="header">
             <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
-            <div class="header-title">{{getNickname(chat)}}&nbsp;&nbsp;&nbsp;</div>
+            <div class="header-title">{{getNickname(chat)}}</div>
             <div class="header-more-btn" @click="toMore"><i class="el-icon-more"></i></div>
         </div>
         <div class="content">
             <div class="msg-list" @scroll="onScroll">
                 <div class="msg-box" v-for="msg in records">
                     <div class="others" v-if="msg.fromId !== user.id">
-                        <div class="user-icon" @click="toOtherInfo(msg.fromId)"><img
-                                :src="chat.fromIcon === user.icon ? chat.toIcon : chat.fromIcon || '/files/icons/default-icon.png'"
-                                alt="">
+                        <div class="user-icon" @click="toOtherInfo(msg.fromId)">
+                            <img :src="chat.fromIcon === user.icon ? chat.toIcon : chat.fromIcon || '/files/icons/default-icon.png'"
+                                alt="" v-if="chat.type == 1">
+                            <img :src="msg.fromIcon || '/files/icons/default-icon.png'" alt="" v-if="chat.type == 0">
                         </div>
                         <div class="msg-content" v-if="msg.type === 0">{{msg.content}}</div>
                         <div class="msg-icon" v-if="msg.type === 1"><img
@@ -132,17 +133,19 @@
                     msgObj.content = this.content;
                     msgObj.type = type;
                     msgObj.fromId = this.user.id;
-                    msgObj.fromNickname = this.user.nickName;
-                    msgObj.fromIcon = this.user.icon;
+                    if (this.chat.type == 0) {
+                        msgObj.fromNickname = this.user.nickName;
+                        msgObj.fromIcon = this.user.icon;
+                    }
                     msgObj.chatId = this.chat.id;
                     if (this.chat.toId === this.user.id) {
                         msgObj.toId = this.chat.fromId;
-                        msgObj.toNickname = this.chat.fromNickname;
-                        msgObj.toIcon = this.chat.fromIcon;
+                        // msgObj.toNickname = this.chat.fromNickname;
+                        // msgObj.toIcon = this.chat.fromIcon;
                     } else {
                         msgObj.toId = this.chat.toId;
-                        msgObj.toNickname = this.chat.toNickname;
-                        msgObj.toIcon = this.chat.toIcon;
+                        // msgObj.toNickname = this.chat.toNickname;
+                        // msgObj.toIcon = this.chat.toIcon;
                     }
                     console.log(msgObj);
                     if (this.chat.type === 0) {
@@ -253,12 +256,28 @@
             },
             watch: {
                 records: {
-                    handler() {
+                    handler(newV, oldV) {
                         console.log("执行了");
+                        console.log(newV);
+                        console.log(oldV);
                         var element = document.getElementById("bottom");
-                        setTimeout(() => {
-                            element.scrollIntoView();
-                        })
+                        if (oldV.length == 0) {
+                            setTimeout(() => {
+                                element.scrollIntoView();
+                            }, 30)
+                        } else if (newV[newV.length - 1].type == 2) {
+                            setTimeout(() => {
+                                element.scrollIntoView();
+                            }, 1000)
+                        } else if (newV[newV.length - 1].type == 1) {
+                            setTimeout(() => {
+                                element.scrollIntoView();
+                            }, 500)
+                        } else {
+                            setTimeout(() => {
+                                element.scrollIntoView();
+                            })
+                        }
                     }
                 }
             }

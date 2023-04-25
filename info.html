@@ -76,8 +76,8 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="评论" name="2">
-          <div class="blog-list" @scroll="onScroll">
-            <div v-for="c in comments" :key="c.id" class="comment-item">
+          <div class="blog-list" @scroll="onScroll2">
+            <div v-for="c in comments" :key="c.id" class="comment-item" @click="toBlogDetail(c.blogId)">
               <div class="comment-info">{{c.content}}</div>
               <div class="item">
                 <div class="blog-img"><img :src="c.blog.images.split(',')[0]" alt=""></div>
@@ -91,7 +91,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="粉丝" name="3">
-          <div class="blog-list" @scroll="onScroll">
+          <div class="blog-list" @scroll="onScroll3">
             <div class="user-box" @click="toOtherInfo(f.id)" v-for="f in fans" :key="f.id">
               <div class="user-icon"><img :src="f.icon || '/files/icons/default-icon.png'" alt=""></div>
               <div class="user-nickname">{{f.nickName}}</div>
@@ -99,7 +99,7 @@
           </div>
         </el-tab-pane>
         <el-tab-pane label="卡券" name="4">
-          <div class="voucher-list" @scroll="onScroll">
+          <div class="voucher-list" @scroll="onScroll4">
             <div class="voucher-box" v-for="v in vouchers" :key="v.id">
               <div class="voucher-circle">
                 <div class="voucher-b"></div>
@@ -212,7 +212,7 @@
           location.href = 'info-more.html'
         },
         logout() {
-          axios.post("/user/logout")
+          axios.post("/user/logout/" + this.user.id)
             .then(() => {
               // 清理session
               sessionStorage.removeItem("token");
@@ -224,17 +224,31 @@
         },
         handleClick(r) {
           if (r.name === '2') {
+            this.current = 1;
+            this.comments = [];
             this.queryMyComments();
           } else if (r.name === '3') {
+            this.current = 1;
+            this.fans = [];
             this.queryMyFans();
           } else if (r.name === '4') {
+            this.current = 1;
+            this.vouchers = [];
             this.queryMyVoucher();
+          } else if (r.name == 1) {
+            this.current = 1;
+            this.blogs = [];
+            this.queryBlogs();
           }
         },
         queryMyComments() {
-          axios.post("/blog-comments/comments")
+          axios.post("/blog-comments/comments?current=" + this.current)
             .then(({ data }) => {
-              this.comments = data;
+              if (!data) {
+                this.current--;
+                return;
+              }
+              this.comments = this.comments.concat(data);
               console.log(this.comments);
             })
             .catch(err => {
@@ -242,9 +256,13 @@
             })
         },
         queryMyFans() {
-          axios.post("/follow/fans")
+          axios.post("/follow/fans?current=" + this.current)
             .then(({ data }) => {
-              this.fans = data;
+              if (!data) {
+                this.current--;
+                return;
+              }
+              this.fans = this.fans.concat(data);
               console.log(this.fans);
             })
             .catch(err => {
@@ -252,9 +270,13 @@
             })
         },
         queryMyVoucher() {
-          axios.post("/voucher/of/" + this.user.id)
+          axios.post("/voucher/of?id=" + this.user.id + "&current=" + this.current)
             .then(({ data }) => {
-              this.vouchers = data;
+              if (!data) {
+                this.current--;
+                return;
+              }
+              this.vouchers = this.vouchers.concat(data);
               console.log(this.vouchers);
             })
             .catch(err => {
@@ -318,7 +340,46 @@
           } else {
             this.isReachBottom = false
           }
+        },
+        onScroll2(e) {
+          let scrollTop = e.target.scrollTop;
+          let offsetHeight = e.target.offsetHeight;
+          let scrollHeight = e.target.scrollHeight;
+          if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+            this.isReachBottom = true
+            // 再次查询下一页数据
+            this.current++;
+            this.queryMyComments();
+          } else {
+            this.isReachBottom = false
+          }
+        },
+        onScroll3(e) {
+          let scrollTop = e.target.scrollTop;
+          let offsetHeight = e.target.offsetHeight;
+          let scrollHeight = e.target.scrollHeight;
+          if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+            this.isReachBottom = true
+            // 再次查询下一页数据
+            this.current++;
+            this.queryMyFans();
+          } else {
+            this.isReachBottom = false
+          }
+        }, onScroll4(e) {
+          let scrollTop = e.target.scrollTop;
+          let offsetHeight = e.target.offsetHeight;
+          let scrollHeight = e.target.scrollHeight;
+          if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+            this.isReachBottom = true
+            // 再次查询下一页数据
+            this.current++;
+            this.queryMyVoucher();
+          } else {
+            this.isReachBottom = false
+          }
         }
+
       },
     })
   </script>

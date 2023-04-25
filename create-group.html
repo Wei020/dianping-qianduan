@@ -8,6 +8,7 @@
     <!-- 引入样式 -->
     <link rel="stylesheet" href="./css/element.css">
     <link href="./css/info.css" rel="stylesheet">
+    <link href="/css/create-group.css" rel="stylesheet">
 
 </head>
 
@@ -15,11 +16,26 @@
     <div id="app">
         <div class="header">
             <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
-            <div class="header-title">创建群聊&nbsp;&nbsp;&nbsp;</div>
+            <div class="header-title">{{getTitle()}}</div>
             <div class="header-submit-btn" @click="submit"><i class="el-icon-check"></i></div>
         </div>
         <div class="body">
-            <input type="text" v-model="name" placeholder="请输入群昵称" maxlength="10">
+            <input type="text" v-model="group.name" placeholder="请输入群昵称" maxlength="10">
+            <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
+            <div class="upload-box">
+                <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
+                <div class="upload-btn" @click="openFileDialog">
+                    <i class="el-icon-camera"></i>
+                    <div style="font-size: 12px;line-height: 12px">群头像</div>
+                </div>
+                <div class="pic-list">
+                    <div class="pic-box" v-for="(f,i) in fileList" :key="i">
+                        <img :src="f" alt="">
+                        <!-- <i class="el-icon-close" @click="deletePic(i)"></i> -->
+                    </div>
+                </div>
+            </div>
+            <textarea v-model="group.introduce" placeholder="简短介绍下群聊~" rows="3" maxlength="30"></textarea>
         </div>
     </div>
     <script src="./js/vue.js"></script>
@@ -34,10 +50,18 @@
             data: {
                 user: "",
                 activeName: "1",
-                name: "",
+                group: {},
                 isReachBottom: false,
+                fileList: [],
+                type: 0
             },
             created() {
+                let type = util.getUrlParam("type");
+                this.type = type;
+                if (type == 1) {
+                    let group = JSON.parse(sessionStorage.getItem("group"));
+                    this.prepare(group);
+                }
                 this.queryUser();
             },
             methods: {
@@ -58,22 +82,65 @@
                 goBack() {
                     location.href = "chat.html"
                 },
-                submit() {
-                    let groupObj = new Object;
-                    groupObj.name = this.name;
-                    groupObj.createId = this.user.id;
-                    groupObj.number = 1;
-                    axios.post("/group/makeGroup", groupObj)
+                openFileDialog() {
+                    this.$refs.fileInput.click();
+                },
+                fileSelected() {
+                    let file = this.$refs.fileInput.files[0];
+                    let formData = new FormData();
+                    formData.append("file", file);
+                    const config = {
+                        headers: { "Content-Type": "multipart/form-data;boundary=" + new Date().getTime() }
+                    };
+                    axios
+                        .post("/upload/file", formData, config)
                         .then(({ data }) => {
-                            console.log(data.id);
-                            console.log("chat为：" + data);
-                            sessionStorage.setItem("chat", JSON.stringify(data));
-                            location.href = "/msg.html";
+                            if (this.fileList[0] !== null)
+                                this.fileList.splice(0, 1)
+                            this.fileList.push('/files' + data.fileName);
+                        })
+                        .catch(this.$message.error);
+                },
+                deletePic(i) {
+                    axios.get("/upload/picture/delete?name=" + this.fileList[i])
+                        .then(() => this.fileList.splice(i, 1))
+                        .catch(this.$message.error)
+                },
+                prepare(group) {
+                    this.group.name = group.name;
+                    this.fileList[0] = group.icon;
+                    this.group.introduce = group.introduce;
+                    this.group.id = group.id;
+                },
+                submit() {
+                    this.group.icon = this.fileList[0];
+                    if (this.type == 0) {
+                        this.group.number = 1;
+                        this.group.createId = this.user.id;
+                    }
+                    axios.post("/group/makeGroup", this.group)
+                        .then(({ data }) => {
+                            if (this.type == 0) {
+                                console.log(data.id);
+                                console.log("chat为：" + data);
+                                sessionStorage.setItem("chat", JSON.stringify(data));
+                                location.href = "/msg.html";
+                            } else if (this.type == 1) {
+                                sessionStorage.removeItem("group");
+                                location.href = "/group-info.html?id=" + this.group.id;
+                            }
                         })
                         .catch(err => {
                             console.log(err);
                             this.$message.error(err)
                         });
+                },
+                getTitle() {
+                    if (this.type == 0) {
+                        return "创建群聊";
+                    } else if (this.type == 1) {
+                        return "编辑群聊";
+                    }
                 }
             },
         })

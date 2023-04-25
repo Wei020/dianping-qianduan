@@ -1,8 +1,3 @@
-.header {
-    background-color: #fff;
-
-}
-
 .top-bar {
     height: 60px;
 }
@@ -17,6 +12,7 @@
     position: fixed;
     top: 0;
     z-index: 500;
+    background-color: #fff;
 }
 
 .shop-avg {
@@ -44,6 +40,12 @@
     color: #82848a;
     font-weight: bold;
     font-family: Hiragino Sans GB, Arial, Helvetica, "\5B8B\4F53", sans-serif;
+}
+
+.content {
+    height: 90%;
+    background-color: #dfedeb;
+    overflow-y: auto;
 }
 
 .menu {
@@ -90,12 +92,29 @@
 }
 
 .swiper-item {
-    position: absolute;
-    left: 0;
-    top: 0;
     width: 100%;
     height: 100%;
+    position: relative;
 }
+
+.swiper-item .el-icon-arrow-left {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    margin-top: -25px;
+    font-size: 50px;
+    color: #69b8b4;
+}
+
+.swiper-item .el-icon-arrow-right {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    margin-top: -25px;
+    font-size: 50px;
+    color: #69b8b4;
+}
+
 
 .basic {
     display: flex;
@@ -255,6 +274,7 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
+
 }
 
 .comment-icon {
@@ -279,9 +299,10 @@
 .comment-user span {
     font-size: 10px;
     padding: 0 10px;
-    border-radius: 8px;
-    background-color: #f7b253;
-    color: white;
+    display: inline-block;
+    /* border-radius: 8px; */
+    /* background-color: #f7b253;
+    color: white; */
 }
 
 .comment-images {
@@ -300,4 +321,31 @@
 
 .comment-more i {
     padding-left: 20px;
+}
+
+.respondBox {
+    width: 100%;
+}
+
+.respond-header {
+    width: 100%;
+    display: flex;
+}
+
+.respond-header img {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+}
+
+.respond-content {
+    margin-left: 20px;
+}
+
+.respond {
+    position: fixed;
+    width: 90%;
+    height: 30%;
+    left: 5%;
+    bottom: 10%;
 }

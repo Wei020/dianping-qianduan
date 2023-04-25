@@ -21,18 +21,29 @@
     <div class="header">
       <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
       <div class="header-title"></div>
-      <div class="header-share">...</div>
+      <div class="header-share">
+        <i class="el-icon-more" @click="show = !show"></i>
+        <el-collapse-transition>
+          <div class="menu" v-show="show">
+            <div class="transition-box" @click="editShop" v-show="shop.createId == user.id">编辑店铺</div>
+            <div class="transition-box" @click="addVoucher" v-show="shop.createId == user.id">推出代金券</div>
+            <div class="transition-box" @click="shareShop">分享店铺</div>
+            <div class="transition-box" @click="showComent = !showComent" v-show="shop.createId != user.id">点评商家</div>
+            <!-- <div class="transition-box" v-show="user.id == blog.userId" @click="editBlog">编辑博客</div> -->
+          </div>
+        </el-collapse-transition>
+      </div>
     </div>
     <div class="top-bar"></div>
     <div class="shop-info-box">
       <div class="shop-title">{{shop.name}}</div>
       <div class="shop-rate">
         <el-rate disabled v-model="shop.score/10" text-color="#F63" show-score></el-rate>
-        <span>{{shop.comments}}条</span>
+        <span>{{comments.length}}条</span>
       </div>
       <div class="shop-rate-info"> 口味:4.9 环境:4.8 服务:4.7 </div>
       <div class="shop-rank">
-        <img src="/imgs/bd.png" width="63" height="20" alt="">
+        <img src="/files/bd.png" width="63" height="20" alt="">
         <span>拱墅区好评榜第3名</span>
         <div><i class="el-icon-arrow-right"></i></div>
       </div>
@@ -79,7 +90,7 @@
         </div>
         <div class="voucher-right">
           <div v-if="v.type" class="seckill-box">
-            <div class="voucher-btn" :class="{'disable-btn': isNotBegin(v) || v.stock < 1}" @click="seckill(v)">限时抢购
+            <div class="voucher-btn" :class="{'disable-btn': isNotBegin(v) || v.stock < 1}" @click="seckill(v)">限量抢购
             </div>
             <div class="seckill-stock">剩余 <span>{{v.stock}}</span> 张</div>
             <div class="seckill-time">{{formatTime(v)}}</div>
@@ -91,7 +102,7 @@
     <div class="shop-divider"></div>
     <div class="shop-comments">
       <div class="comments-head">
-        <div>网友评价 <span>（119）</span></div>
+        <div>热门评价</div>
         <div><i class="el-icon-arrow-right"></i></div>
       </div>
       <div class="comment-tags">
@@ -106,50 +117,75 @@
         <div class="tag">朋友聚餐(6)</div>
       </div>
       <div class="comment-list">
-        <div class="comment-box" v-for="i in 3" :key="i">
+        <div class="comment-box" v-for="c in comments" :key="c.id">
           <div class="comment-icon">
-            <img
+            <!-- <img
               src="https://p0.meituan.net/userheadpicbackend/57e44d6eba01aad0d8d711788f30a126549507.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0"
-              alt="">
+              alt=""> -->
+            <img :src="c.user.icon || '/files/icons/default-icon.png'" alt="">
           </div>
           <div class="comment-info">
-            <div class="comment-user">叶小乙 <span>Lv5</span></div>
+            <div class="comment-user">{{c.user.nickName}}
+              <!-- <span>Lv5</span> -->
+            </div>
             <div style="display: flex;">
-              打分
-              <el-rate disabled v-model="4.5"></el-rate>
+              <span style="width: 70%; display: flex;">评分<el-rate disabled v-model="c.rate"></el-rate></span>
+              <div class="blog-liked" @click="addLike(c)">
+                <svg t="1646634642977" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                  xmlns="http://www.w3.org/2000/svg" p-id="2187" width="14" height="14">
+                  <path
+                    d="M160 944c0 8.8-7.2 16-16 16h-32c-26.5 0-48-21.5-48-48V528c0-26.5 21.5-48 48-48h32c8.8 0 16 7.2 16 16v448zM96 416c-53 0-96 43-96 96v416c0 53 43 96 96 96h96c17.7 0 32-14.3 32-32V448c0-17.7-14.3-32-32-32H96zM505.6 64c16.2 0 26.4 8.7 31 13.9 4.6 5.2 12.1 16.3 10.3 32.4l-23.5 203.4c-4.9 42.2 8.6 84.6 36.8 116.4 28.3 31.7 68.9 49.9 111.4 49.9h271.2c6.6 0 10.8 3.3 13.2 6.1s5 7.5 4 14l-48 303.4c-6.9 43.6-29.1 83.4-62.7 112C815.8 944.2 773 960 728.9 960h-317c-33.1 0-59.9-26.8-59.9-59.9v-455c0-6.1 1.7-12 5-17.1 69.5-109 106.4-234.2 107-364h41.6z m0-64h-44.9C427.2 0 400 27.2 400 60.7c0 127.1-39.1 251.2-112 355.3v484.1c0 68.4 55.5 123.9 123.9 123.9h317c122.7 0 227.2-89.3 246.3-210.5l47.9-303.4c7.8-49.4-30.4-94.1-80.4-94.1H671.6c-50.9 0-90.5-44.4-84.6-95l23.5-203.4C617.7 55 568.7 0 505.6 0z"
+                    p-id="2188" :fill="c.isLike ? '#ff6633' : '#82848a'"></path>
+                </svg>
+                {{c.liked}}
+              </div>
+              <i class="el-icon-delete" v-if="c.user.id == user.id" @click="deleteComment(c)"
+                style="width: 20%; text-align: right; font-size: 15px;"></i>
             </div>
             <div style="padding: 5px 0; font-size: 14px">
-              某平台上买的券，价格可以当工作餐吃，虽然价格便宜，但是这家店一点都没有...
+              <!-- 某平台上买的券，价格可以当工作餐吃，虽然价格便宜，但是这家店一点都没有... -->
+              {{c.content}}
             </div>
             <div class="comment-images">
-              <img
-                src="https://qcloud.dpfile.com/pc/6T7MfXzx7USPIkSy7jzm40qZSmlHUF2jd-FZUL6WpjE9byagjLlrseWxnl1LcbuSGybIjx5eX6WNgCPvcASYAw.jpg"
-                alt="">
-              <img
-                src="https://qcloud.dpfile.com/pc/sZ5q-zgglv4VXEWU71xCFjnLM_jUHq-ylq0GKivtrz3JksWQ1f7oBWZsxm1DWgcaGybIjx5eX6WNgCPvcASYAw.jpg"
-                alt="">
-              <img
-                src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
-                alt="">
-              <img
-                src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
-                alt="">
-            </div>
-            <div>
-              浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5
+              <div class="img" v-for="i in c.images">
+                <img :src="i" alt="" v-if="i != null">
+              </div>
             </div>
           </div>
         </div>
+        <div class="bottom" id="bottom"></div>
         <div
           style="display: flex; justify-content: space-between;padding: 15px 0; border-top: 1px solid #f1f1f1; margin-top: 10px;">
-          <div>查看全部119条评价</div>
-          <div><i class="el-icon-arrow-right"></i></div>
+          <div>查看所有评价</div>
+          <div @click="queryAll()"><i class="el-icon-arrow-right"></i></div>
         </div>
       </div>
     </div>
     <div class="shop-divider"></div>
-    <div class="copyright">
-      copyright ©2021 hmdp.com
+    <div class="comment" v-show="showComent">
+      <div class="close"><i class="el-icon-close" @click="showComent = false"></i></div>
+      <div class="rate">
+        <span>打分:</span>
+        <el-rate v-model="shopComment.rate" :allow-half="true" style="width: 70%; display: inline-block;"></el-rate>
+      </div>
+      <div class="content">
+        <el-input type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="shopComment.content" resize="none"
+          maxlength="150" outline="none" style="width: 100%;"></el-input>
+        <div class="upload-box">
+          <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
+          <div class="upload-btn" @click="openFileDialog">
+            <i class="el-icon-camera"></i>
+            <div style="font-size: 12px;line-height: 12px">上传照片</div>
+          </div>
+          <div class="pic-list">
+            <div class="pic-box" v-for="(f,i) in fileList" :key="i">
+              <img :src="f" alt="">
+              <i class="el-icon-close" @click="deletePic(i)"></i>
+            </div>
+          </div>
+        </div>
+        <el-button style="width: 40%; margin-left: 30%; margin-top: 20px;" @click="commentShop">发送</el-button>
+      </div>
     </div>
   </div>
   <script src="./js/vue.js"></script>
@@ -164,8 +200,16 @@
       data: {
         util,
         shop: {},
+        user: "", // 登录用户
         vouchers: [],
-        shopId: -1
+        shopId: -1,
+        show: false,
+        showComent: false,
+        fileList: [],
+        shopComment: {
+
+        },
+        comments: []
       },
       created() {
         // 获取参数
@@ -174,11 +218,27 @@
         this.queryShopById(shopId);
         // 查询优惠券信息
         this.queryVoucher(shopId);
+        this.queryComments(shopId);
         this.shopId = shopId;
+        this.queryUser();
       },
       methods: {
         goBack() {
           history.back();
+        },
+        queryUser() {
+          // 查询用户信息
+          axios.get("/user/me")
+            .then(({ data }) => {
+              // 保存用户
+              this.user = data;
+            })
+            .catch(err => {
+
+            })
+        },
+        queryAll() {
+          location.href = "/all-comments.html?id=" + this.shopId + "&type=" + 2;;
         },
         queryShopById(shopId) {
           axios.get("/shop/" + shopId)
@@ -195,12 +255,100 @@
             })
             .catch(this.$message.error)
         },
+        queryComments(shopId) {
+          axios.post("/shop-comment/" + shopId)
+            .then(({ data }) => {
+              for (var i = 0; i < data.length; i++) {
+                if (data[i].images != null) {
+                  data[i].images = data[i].images.split(",");
+                }
+                data[i].rate = data[i].rate / 10;
+              }
+              this.comments = data;
+              console.log(this.comments);
+            })
+            .catch(this.$message.error)
+        },
+        editShop() {
+          sessionStorage.setItem("shop", JSON.stringify(this.shop))
+          location.href = "shop-import.html";
+        },
+        addVoucher() {
+          location.href = "voucher-create.html?shopId=" + this.shopId;
+        },
+        shareShop() {
+          location.href = "blog-edit.html?shopId=" + this.shopId;
+        },
+        deleteComment(c) {
+          if (c.images != null) {
+            c.images = c.images.join(",");
+          }
+          axios.post("/shop-comment/delete", c)
+            .then(({ data }) => {
+              if (data) {
+                this.queryComments(this.shopId);
+              }
+            })
+            .catch(this.$message.error)
+        },
+        commentShop() {
+          this.shopComment.userId = this.user.id;
+          this.shopComment.shopId = this.shopId;
+          this.shopComment.images = this.fileList.join(",");
+          console.log(this.shopComment.rate);
+          this.shopComment.rate = this.shopComment.rate * 10;
+          console.log(this.shopComment.rate);
+          axios.post("/shop-comment/add", this.shopComment)
+            .then(({ data }) => {
+              console.log(data);
+              if (data.images != null) {
+                data.images = data.images.split(",");
+              }
+              data.rate = data.rate / 10;
+              console.log(data.rate);
+              this.comments = this.comments.concat(data);
+              console.log(this.comments);
+              this.shopComment.content = "";
+              this.shopComment.rate = 0;
+              this.showComent = false;
+              this.show = false;
+              var element = document.getElementById("bottom");
+              setTimeout(() => {
+                element.scrollIntoView();
+              })
+            })
+            .catch(this.$message.error)
+        },
+        openFileDialog() {
+          this.$refs.fileInput.click();
+        },
+        fileSelected() {
+          let file = this.$refs.fileInput.files[0];
+          let formData = new FormData();
+          formData.append("file", file);
+          const config = {
+            headers: { "Content-Type": "multipart/form-data;boundary=" + new Date().getTime() }
+          };
+          axios
+            .post("/upload/file", formData, config)
+            .then(({ data }) => {
+              this.fileList.push('/files' + data.fileName);
+              console.log("文件名:" + data.fileName);
+            })
+            .catch(this.$message.error);
+        },
+        deletePic(i) {
+          axios.get("/upload/file/delete?name=" + this.fileList[i])
+            .then(() => this.fileList.splice(i, 1))
+            .catch(this.$message.error)
+        },
         formatTime(v) {
           let b = new Date(v.beginTime);
           let e = new Date(v.endTime);
+          let endMonth = e.getMonth() + 1;
           return b.getMonth() + 1 + "月" + b.getDate() + "日 "
             + b.getHours() + ":" + this.formatMinutes(b.getMinutes())
-            + " ~ "/*  + e.getMonth() + 1 + "月" + e.getDate() + "日 " */
+            + " ~ " + endMonth + "月" + e.getDate() + "日 "
             + e.getHours() + ":" + this.formatMinutes(e.getMinutes());
         },
         formatMinutes(m) {
@@ -213,7 +361,26 @@
         isEnd(v) {
           return new Date(v.endTime).getTime() < new Date().getTime();
         },
+        addLike(c) {
+          axios.post("/shop-comment/like/" + c.id)
+            .then(({ data }) => {
+              c.liked = data.liked;
+              c.isLike = data.isLike;
+              // this.queryBlogById(b)
+            })
+            .catch(err => {
+              this.$message.error(err)
+            })
+        },
         kill(v) {
+          if (!token) {
+            this.$message.error("请先登录")
+            // 未登录，跳转
+            setTimeout(() => {
+              location.href = "/login.html"
+            }, 200);
+            return;
+          }
           axios.post("/voucher-order/kill/" + v.id)
             .then(({ data }) => {
               if (data) {

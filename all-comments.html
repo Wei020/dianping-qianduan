@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <title>好享_haoxiang</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="./css/element.css">
+
+    <link href="./css/all-comments.css" rel="stylesheet">
+    <link href="./css/main.css" rel="stylesheet">
+
+    <style type="text/css">
+        .header {
+            position: relative;
+        }
+
+        .foot-view span {
+            font-size: 12px;
+        }
+
+        /* .liked {} */
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="header">
+            <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+            <div class="header-title">全部评论{{comments.length}}</div>
+            <div class="header-more-btn"></div>
+        </div>
+        <div class="content">
+            <div class="blog-comments" v-if="type == 1">
+                <div class="comment-list">
+                    <div class="comment-box" v-for="item in comments" :key="item.id">
+                        <div class="comment-icon" @click="toOtherInfo(item.userId)">
+                            <img :src="item.user.icon || '/files/icons/default-icon.png'" alt="">
+                        </div>
+                        <div class="comment-info">
+                            <div class="comment-user">
+                                <span style="width: 30%;">{{item.user.nickName}}</span>
+                                <i class="el-icon-delete" v-if="item.user.id == user.id" @click="deleteComment(item)"
+                                    style="width: 60%; text-align: right;"></i>
+                            </div>
+                            <div style="padding: 5px 0; font-size: 14px" @click="respondTo(item)">
+                                {{item.content}}
+                            </div>
+                            <div class="comment-more">
+                                <div class="respondBox" v-for="r in item.respondLists" :key="r.id">
+                                    <div class="respond-header">
+                                        <img :src="r.user.icon" alt="" @click="toOtherInfo(r.userId)">
+                                        <span class="title"
+                                            style="width: 50%;">{{r.user.nickName}}回复{{r.answerUser.nickName}}</span>
+                                        <i class="el-icon-delete" v-if="r.user.id == user.id" @click="deleteComment(r)"
+                                            style="width: 30%; text-align: right;"></i>
+                                    </div>
+                                    <div class="respond-content" @click="respondTo(r)">
+                                        {{r.content}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="shop-comments" v-if="type == 2">
+                <div class="comment-list">
+                    <div class="comment-box" v-for="c in comments" :key="c.id">
+                        <div class="comment-icon">
+                            <!-- <img
+                          src="https://p0.meituan.net/userheadpicbackend/57e44d6eba01aad0d8d711788f30a126549507.jpg%4048w_48h_1e_1c_1l%7Cwatermark%3D0"
+                          alt=""> -->
+                            <img :src="c.user.icon || '/files/icons/default-icon.png'" alt="">
+                        </div>
+                        <div class="comment-info">
+                            <div class="comment-user">{{c.user.nickName}}
+                                <!-- <span>Lv5</span> -->
+                            </div>
+                            <div style="display: flex;">
+                                <span style="width: 70%; display: flex;">评分<el-rate disabled
+                                        v-model="c.rate"></el-rate></span>
+                                <div class="blog-liked" @click="addLike(c)">
+                                    <svg t="1646634642977" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                                        xmlns="http://www.w3.org/2000/svg" p-id="2187" width="14" height="14">
+                                        <path
+                                            d="M160 944c0 8.8-7.2 16-16 16h-32c-26.5 0-48-21.5-48-48V528c0-26.5 21.5-48 48-48h32c8.8 0 16 7.2 16 16v448zM96 416c-53 0-96 43-96 96v416c0 53 43 96 96 96h96c17.7 0 32-14.3 32-32V448c0-17.7-14.3-32-32-32H96zM505.6 64c16.2 0 26.4 8.7 31 13.9 4.6 5.2 12.1 16.3 10.3 32.4l-23.5 203.4c-4.9 42.2 8.6 84.6 36.8 116.4 28.3 31.7 68.9 49.9 111.4 49.9h271.2c6.6 0 10.8 3.3 13.2 6.1s5 7.5 4 14l-48 303.4c-6.9 43.6-29.1 83.4-62.7 112C815.8 944.2 773 960 728.9 960h-317c-33.1 0-59.9-26.8-59.9-59.9v-455c0-6.1 1.7-12 5-17.1 69.5-109 106.4-234.2 107-364h41.6z m0-64h-44.9C427.2 0 400 27.2 400 60.7c0 127.1-39.1 251.2-112 355.3v484.1c0 68.4 55.5 123.9 123.9 123.9h317c122.7 0 227.2-89.3 246.3-210.5l47.9-303.4c7.8-49.4-30.4-94.1-80.4-94.1H671.6c-50.9 0-90.5-44.4-84.6-95l23.5-203.4C617.7 55 568.7 0 505.6 0z"
+                                            p-id="2188" :fill="c.isLike ? '#ff6633' : '#82848a'"></path>
+                                    </svg>
+                                    {{c.liked}}
+                                </div>
+                                <i class="el-icon-delete" v-if="c.user.id == user.id" @click="deleteComment(c)"
+                                    style="width: 20%; text-align: right; font-size: 15px;"></i>
+                            </div>
+                            <div style="padding: 5px 0; font-size: 14px">
+                                <!-- 某平台上买的券，价格可以当工作餐吃，虽然价格便宜，但是这家店一点都没有... -->
+                                {{c.content}}
+                            </div>
+                            <div class="comment-images">
+                                <div class="img" v-for="i in c.images">
+                                    <img :src="i" alt="" v-if="i != null">
+                                </div>
+                            </div>
+                            <div class="delete">
+                                <!-- 浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <script src="./js/vue.js"></script>
+            <script src="./js/axios.min.js"></script>
+            <!-- 引入组件库 -->
+            <script src="./js/element.js"></script>
+            <script src="./js/common.js"></script>
+            <script>
+                // let each = function (ary, callback) {
+                //     for (let i = 0, l = ary.length; i < l; i++) {
+                //         if (callback(ary[i], i) === false) break
+                //     }
+                // }
+                const app = new Vue({
+                    el: "#app",
+                    data: {
+                        util,
+                        blog: {},
+                        user: {}, // 登录用户
+                        comments: [],
+                        imgIndex: 0,
+                        blogId: "",
+                        shopId: "",
+                        type: -1
+                    },
+                    created() {
+                        let id = util.getUrlParam("id");
+                        let type = util.getUrlParam("type");
+                        this.type = type;
+                        this.queryLoginUser();
+                        if (type == 1) {
+                            this.blogId = id;
+                            this.queryBlogComments(id);
+                        } else if (type == 2) {
+                            this.shopId = id;
+                            this.queryShopComments(id);
+                        }
+                    },
+                    methods: {
+                        goBack() {
+                            history.back();
+                        },
+                        queryLoginUser() {
+                            // 查询用户信息
+                            axios.get("/user/me")
+                                .then(({ data }) => {
+                                    // 保存用户
+                                    this.user = data;
+                                    if (this.user.id !== this.blog.userId) {
+                                        this.isFollowed();
+                                    }
+                                })
+                                .catch(this.$message.error)
+                        },
+                        toOtherInfo(id) {
+                            if (id === this.user.id) {
+                                location.href = "/info.html"
+                            } else {
+                                location.href = "/other-info.html?id=" + id
+                            }
+                        },
+                        addLike(c) {
+                            axios.post("/shop-comment/like/" + c.id)
+                                .then(({ data }) => {
+                                    c.liked = data.liked;
+                                    c.isLike = data.isLike;
+                                    // this.queryBlogById(b)
+                                })
+                                .catch(err => {
+                                    this.$message.error(err)
+                                })
+                        },
+                        queryBlogComments(id) {
+                            axios.get("/blog-comments/queryAll/" + id)
+                                .then(({ data }) => {
+                                    this.comments = data;
+                                    console.log(data);
+                                })
+                                .catch(this.$message.error)
+                        },
+                        queryShopComments(shopId) {
+                            axios.post("/shop-comment/all/" + shopId)
+                                .then(({ data }) => {
+                                    for (var i = 0; i < data.length; i++) {
+                                        if (data[i].images != null) {
+                                            data[i].images = data[i].images.split(",");
+                                        }
+                                        data[i].rate = data[i].rate / 10;
+                                    }
+                                    this.comments = data;
+                                    console.log(this.comments);
+                                })
+                                .catch(this.$message.error)
+                        },
+                        deleteComment(item) {
+                            if (this.type == 1) {
+                                axios.post("/blog-comments/delete/" + item.id)
+                                    .then(({ data }) => {
+                                        if (data) {
+                                            this.queryBlogComments(this.blogId);
+                                        }
+                                    })
+                                    .catch(this.$message.error)
+                            }
+                            else if (this.type == 2) {
+                                if (item.images != null) {
+                                    item.images = item.images.join(",");
+                                }
+                                axios.post("/shop-comment/delete", item)
+                                    .then(({ data }) => {
+                                        if (data) {
+                                            this.queryShopComments(this.shopId);
+                                        }
+                                    })
+                                    .catch(this.$message.error)
+                            }
+                        }
+                    }
+                })
+            </script>
+</body>
+
+</html>

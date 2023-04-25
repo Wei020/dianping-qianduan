@@ -23,7 +23,8 @@
                 <div class="msg-box" v-for="notice in records" @click="doNotice(notice)">
                     <div class="msg-content" v-if="notice.type === 0">{{notice.fromNickname}}申请加入{{notice.content}}
                     </div>
-                    <div class="msg-content" v-if="notice.type === 2 || notice.type === 3">{{notice.content}}</div>
+                    <div class="msg-content" v-if="notice.type === 2 || notice.type === 3 || notice.type == 4">
+                        {{notice.content}}</div>
                     <div class="notice-state" v-if="notice.type === 0">
                         <i v-if="notice.fromId === user.id" class="el-icon-top-right"></i>
                         <i v-else class="el-icon-bottom-left"></i>
@@ -49,7 +50,7 @@
                 content: "",
                 records: [],
                 stompClient: '',
-                // current:1,
+                current: 1,
                 // count: 5,
                 // isReachBottom: false,
             },
@@ -72,28 +73,20 @@
                     });
                 },
                 queryRecords(id) {
-                    axios.get("/notice/queryNotice?id=" + id)
+                    axios.get("/notice/queryNotice?id=" + id + "&current=" + this.current)
                         .then(({ data }) => {
                             // 保存用户
-                            this.records = data;
+                            if (!data) {
+                                this.current--;
+                                return;
+                            }
+                            this.records = this.records.concat(data);
                             console.log(this.records);
                         })
                         .catch(err => {
                             this.$message.error(err)
                         })
                 },
-                // queryChat(chatId){
-                //     axios.get("/chat/queryChat?chatId=" + chatId)
-                //         .then(({data}) => {
-                //             // 保存用户
-                //             this.chat = data;
-                //             this.connect();
-                //             console.log(this.chat);
-                //         })
-                //         .catch(err => {
-                //             this.$message.error(err)
-                //         })
-                // },
                 queryUser() {
                     // 查询用户信息
                     axios.get("/user/me")
@@ -113,22 +106,23 @@
                     let scrollTop = e.target.scrollTop;
                     let offsetHeight = e.target.offsetHeight;
                     let scrollHeight = e.target.scrollHeight;
-                    // if (scrollTop === 0) {
-                    //     // 到顶部了，查询一次
-                    //     this.queryRecords(true);
-                    // } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
-                    //     this.isReachBottom = true
-                    //     // 再次查询下一页数据
-                    //     this.queryBlogsOfFollow();
-                    // } else {
-                    //     this.isReachBottom = false
-                    // }
+                    if (scrollTop === 0) {
+                        // 到顶部了，查询一次
+                        // this.queryRecords(true);
+                    } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+                        this.isReachBottom = true
+                        // 再次查询下一页数据
+                        this.current++;
+                        this.queryRecords(this.user.id);
+                    } else {
+                        this.isReachBottom = false
+                    }
                 },
                 doNotice(notice) {
                     if (notice.type === 2) {
                         location.href = "other-info.html?id=" + notice.fromId;
                     }
-                    if (notice.type === 3) {
+                    if (notice.type === 3 || notice.type == 4) {
                         location.href = "/blog-detail.html?id=" + notice.blogId;
                     }
                     if (notice.fromId === this.user.id || notice.state === 1 || notice.state === 2) {

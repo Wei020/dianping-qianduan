@@ -38,7 +38,8 @@
     <div id="app">
         <div class="header">
             <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
-            <div class="header-title">&nbsp;&nbsp;&nbsp;</div>
+            <div class="header-title"></div>
+            <div class="edit" @click="editGroup()" v-show="group.createId == user.id"><i class="el-icon-edit"></i></div>
         </div>
         <div class="basic">
             <div class="basic-icon">
@@ -65,7 +66,8 @@
             <div class="all" @click="getAll">查看全部成员</div>
         </div>
         <div class="out" v-show="followed === true">
-            <el-button type="primary" round @click="out">退出群聊</el-button>
+            <el-button type="primary" round @click="out" v-if="group.createId != user.id">退出群聊</el-button>
+            <el-button type="primary" round @click="cancel" v-else-if="group.createId == user.id">解散群聊</el-button>
         </div>
         <foot-bar :active-btn="0"></foot-bar>
     </div>
@@ -154,6 +156,10 @@
                             });
                     }
                 },
+                editGroup() {
+                    sessionStorage.setItem("group", JSON.stringify(this.group));
+                    location.href = "create-group.html?type=1";
+                },
                 out() {
                     this.$confirm('是否退出群聊?', '提示', {
                         confirmButtonText: '确定',
@@ -172,6 +178,31 @@
                         this.$message({
                             type: 'success',
                             message: '退出成功!'
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '已取消'
+                        });
+                    });
+                },
+                cancel() {
+                    this.$confirm('是否解散群聊?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.post("/group/cancel/" + this.group.id)
+                            .then(({ data }) => {
+                                location.href = "chat.html";
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                this.$message.error(err)
+                            });
+                        this.$message({
+                            type: 'success',
+                            message: '解散成功!'
                         });
                     }).catch(() => {
                         this.$message({

@@ -95,9 +95,14 @@
       },
       created() {
         let blog = JSON.parse(sessionStorage.getItem("blog")) || {};
+        let shopId = util.getUrlParam("shopId");
         this.prepare(blog);
         this.checkLogin();
         this.queryShops();
+        if (shopId != '') {
+          console.log("shopId:" + shopId);
+          this.queryShopById(shopId);
+        }
       },
       methods: {
         queryShops() {
@@ -124,7 +129,6 @@
           axios.post("/blog", data)
             .then(resp => location.href = "/info.html")
             .catch(this.$message.error)
-          sessionStorage.removeItem("blog");
         },
         openFileDialog() {
           this.$refs.fileInput.click();
@@ -164,7 +168,6 @@
             })
         },
         goBack() {
-          sessionStorage.removeItem("blog");
           history.back();
         },
         handleRemove(file) {
@@ -180,7 +183,7 @@
             .catch(this.$message.error)
         },
         prepare(blog) {
-          if (blog.title === undefined) {
+          if (blog.id === undefined) {
             console.log("blog为空");
             return;
           } else {
@@ -188,9 +191,11 @@
             this.fileList = blog.images;
             this.params.title = blog.title;
             this.params.content = blog.content;
+            this.params.id = blog.id;
             if (blog.shopId !== undefined) {
               this.queryShopById(blog.shopId);
             }
+            sessionStorage.removeItem("blog");
           }
         }
       },

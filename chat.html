@@ -35,12 +35,13 @@
       </div>
     </div>
     <div class="content">
-      <div class="chats-list" v-if="flag === 1">
+      <div class="chats-list" v-if="flag === 1" @scroll="onScroll" id="list">
         <div class="notice" @click="toNotice">
           <i class="el-icon-chat-dot-square">消息通知</i>
         </div>
         <div class="chat-box" @click="toMsgDetail(chat)" :class="{self:chat.fromId==user.id}" v-for="chat in chats">
-          <div class="user-icon"><img :src="chat.toIcon || '/files/icons/default-icon.png'" alt=""></div>
+          <div class="user-icon"><img
+              :src="chat.toId == user.id ? chat.fromIcon : chat.toIcon || '/files/icons/default-icon.png'" alt=""></div>
           <div class="chat-nickname">{{getNickname(chat)}}</div>
         </div>
       </div>
@@ -78,11 +79,7 @@
         chats: [],
         users: [],
         groups: [],
-        params: {
-          minTime: 0, // 上一次拉取到的时间戳
-          offset: 0, // 偏移量
-        },
-        count: 5,
+        current: 1,
         isReachBottom: false,
         flag: 1,
         show: false
@@ -103,11 +100,13 @@
           let scrollHeight = e.target.scrollHeight;
           if (scrollTop === 0) {
             // 到顶部了，查询一次
-            this.queryBlogsOfFollow(true);
+            // this.queryBlogsOfFollow(true);
           } else if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
+            console.log("触底");
             this.isReachBottom = true
             // 再次查询下一页数据
-            this.queryBlogsOfFollow();
+            this.current++;
+            this.queryChats();
           } else {
             this.isReachBottom = false
           }
@@ -125,14 +124,16 @@
             })
         },
         queryChats() {
-          axios.get("/chat/myChats?id=" + this.user.id)
+          axios.get("/chat/myChats?id=" + this.user.id + "&current=" + this.current)
             .then(({ data }) => {
               // 保存用户
-              this.chats = data;
+              if (!data) {
+                this.current--;
+                return;
+              }
+              this.chats = this.chats.concat(data);
             })
-            .catch(err => {
-              location.href = "login.html"
-            })
+            .catch(this.$message.error)
         },
         find() {
           if (this.condition === "") {
@@ -145,22 +146,18 @@
               console.log(data);
               this.users = data;
             })
-            .catch(err => {
-              location.href = "login.html"
-            })
+            .catch(this.$message.error)
           axios.get("/group/find?condition=" + this.condition)
             .then(({ data }) => {
               console.log(data);
               this.groups = data;
             })
-            .catch(err => {
-              location.href = "login.html"
-            })
+            .catch(this.$message.error)
           this.condition = "";
           this.flag = 2;
         },
         create() {
-          location.href = "create-group.html"
+          location.href = "create-group.html?type=0";
         },
         toOtherInfo(id) {
           if (id === this.user.id) {

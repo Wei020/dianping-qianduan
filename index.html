@@ -20,7 +20,7 @@
 <body>
   <div id="app">
     <div class="search-bar">
-      <div class="city-btn">{{city || "定位中..."}} <i class="el-icon-arrow-down"></i></div>
+      <div class="city-btn">{{city || "未登录"}}</div>
       <div class="search-input">
         <el-input size="mini" placeholder="搜索博客" v-model="condition">
           <i slot="prefix" class="el-input__icon el-icon-search"></i>
@@ -79,10 +79,18 @@
       },
       created() {
         // 查询类型
+        this.queryCity();
         this.queryTypes();
         this.queryHotBlogsScroll();
       },
       methods: {
+        queryCity() {
+          // 查询用户信息
+          let info = JSON.parse(sessionStorage.getItem("userInfo")) || {};
+          if (info.city !== undefined) {
+            this.city = info.city;
+          }
+        },
         queryTypes() {
           axios.get("/shop-type/list")
             .then(({ data }) => {

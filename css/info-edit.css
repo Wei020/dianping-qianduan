@@ -84,6 +84,14 @@
     width: 100%;
 }
 
+.city {
+    width: 100%;
+}
+
+.city .block {
+    width: 100%;
+}
+
 .upload-btn {
     position: relative;
     text-align: center;

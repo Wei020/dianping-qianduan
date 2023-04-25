@@ -36,7 +36,6 @@
             </div>
             <template v-else-if="type === '5'">
                 <div class="birthday">
-                    <span class="demonstration"></span>
                     <el-date-picker class="block" v-model="info.birthday" type="date" value-format="yyyy-MM-dd"
                         placeholder="选择日期">
                     </el-date-picker>
@@ -55,6 +54,10 @@
                     </div> 
                   </div> -->
             </div>
+            <div class="city" v-else-if="type == 4">
+                <el-cascader class="block" v-model="city" :options="options" :show-all-levels="false"
+                    @change="handleChange"></el-cascader>
+            </div>
         </div>
     </div>
     <script src="./js/vue.js"></script>
@@ -71,12 +74,17 @@
                 user: "",
                 info: {},
                 type: "",
-                fileList: []
+                fileList: [],
+                city: [],
+                options: []
             },
             created() {
                 let type = util.getUrlParam("type");
                 this.type = type;
                 this.checkLogin();
+                if (type == 4) {
+                    this.queryCity();
+                }
             },
             methods: {
                 checkLogin() {
@@ -101,6 +109,9 @@
                             .then(resp => location.href = "/info-more.html")
                             .catch(this.$message.error)
                     } else if (type === '2' || type === '3' || type === '4' || type === '5') {
+                        if (type == 4) {
+                            this.info.city = this.city[1];
+                        }
                         axios.post("/user/infoEdit", this.info)
                             .then(resp => {
                                 sessionStorage.setItem("userInfo", JSON.stringify(this.info))
@@ -135,6 +146,17 @@
                     axios.get("/upload/picture/delete?name=" + this.fileList[i])
                         .then(() => this.fileList.splice(i, 1))
                         .catch(this.$message.error)
+                },
+                queryCity() {
+                    axios.post("/user/city")
+                        .then(({ data }) => {
+                            this.options = data;
+                            console.log(this.options);
+                        })
+                        .catch(this.$message.error)
+                },
+                handleChange(value) {
+                    console.log(value);
                 },
                 getTitile(type) {
                     if (this.type === '3') {

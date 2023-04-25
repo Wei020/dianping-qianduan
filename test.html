@@ -1,51 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html>
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>根据ip定位</title>
 </head>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-    }
-
-    body,
-    html {
-        width: 100%;
-        height: 100%;
-    }
-
-    body {
-        display: flex;
-    }
-
-    .left {
-        width: 48%;
-        height: 40%;
-        background-color: aliceblue;
-    }
-
-    .right {
-        width: 48%;
-        height: 60%;
-        background-color: blue;
-    }
-
-    .ledown {
-        width: 48%;
-        height: 30%;
-        background-color: black;
-    }
-</style>
 
 <body>
-    <div class="left"></div>
-    <div class="right"></div>
-    <div class="ledown"></div>
+    <template>
+        <div id="app">
+            <el-cascader size="large" :options="options" v-model="selectedOptions" @change="handleChange">
+            </el-cascader>
+        </div>
+    </template>
+
+    <script type="module">
+        import { provinceAndCityDataPlus } from './element-china-area-data'
+        export default {
+            data() {
+                return {
+                    options: provinceAndCityDataPlus,
+                    selectedOptions: []
+                }
+            },
+
+            methods: {
+                handleChange(value) {
+                    console.log(value)
+                }
+            }
+        }
+    </script>
 </body>
 
 </html>

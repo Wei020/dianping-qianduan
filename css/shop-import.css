@@ -9,14 +9,68 @@
 }
 
 .header-back-btn {
-    width: 10%;
+    position: absolute;
+    left: 0;
     color: #ff6633;
     font-size: 22px;
 }
 
 .header-title {
-    width: 80%;
+    position: relative;
+    width: 100%;
     text-align: center;
     font-size: 18px;
     font-family: Hiragino Sans GB, Arial, Helvetica, "\5B8B\4F53", sans-serif;
+}
+
+.upload-box {
+    padding: 15px;
+    display: flex;
+    overflow-x: scroll;
+}
+
+.upload-btn {
+    width: 70px;
+    height: 125px;
+    line-height: 40px;
+    text-align: center;
+    align-items: center;
+    border: 1px dashed #3a8ee6;
+    border-radius: 5px;
+    font-size: 30px;
+    color: #82848a;
+    margin-right: 10px;
+}
+
+.upload-btn i {
+    margin-top: 35px;
+}
+
+.pic-list {
+    display: flex;
+    overflow-x: scroll;
+    height: 125px;
+}
+
+.pic-box {
+    width: 100px;
+    height: 120px;
+    border-radius: 5px;
+    margin-right: 2px;
+    border: 1px solid #c0ccda;
+    position: relative;
+}
+
+.pic-box img {
+    width: 100px;
+    height: 120px;
+    border-radius: 5px;
+}
+
+.pic-box i {
+    position: absolute;
+    z-index: 99;
+    top: 2px;
+    right: 2px;
+    /* color: gray; */
 }

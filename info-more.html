@@ -64,21 +64,11 @@
         <div class="divider"></div>
         <div class="info-item">
           <div class="info-label">城市</div>
-          <div class="info-btn">
+          <div class="info-btn" @click="infoEdit(4)">
             <div>{{info.city || '选择'}}</div>
-            <div><el-dropdown @command="handleCity">
-                <span class="el-dropdown-link">
-                  <i class="el-icon-arrow-right"></i>
-                </span>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="北京">北京</el-dropdown-item>
-                  <el-dropdown-item command="上海">上海</el-dropdown-item>
-                  <el-dropdown-item command="杭州">杭州</el-dropdown-item>
-                  <el-dropdown-item command="广州">广州</el-dropdown-item>
-                  <el-dropdown-item command="深圳">深圳</el-dropdown-item>
-                  <el-dropdown-item command="武汉">武汉</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown></div>
+            <div>
+              <i class="el-icon-arrow-right"></i>
+            </div>
           </div>
         </div>
         <div class="divider"></div>
@@ -99,18 +89,18 @@
             <div><i class="el-icon-arrow-right"></i></div>
           </div>
         </div>
-        <div class="divider"></div>
+        <!-- <div class="divider"></div> -->
         <div class="info-item">
           <div class="info-label">会员等级</div>
           <div class="info-btn">
-            <div><a href="shop-import.html">入驻</a></div>
+            <div><a href="javascript:void(0)">成为VIP尊享特权</a></div>
             <div><i class="el-icon-arrow-right"></i></div>
           </div>
         </div>
-        <div class="import-shop">
+        <div class="info-item" v-if="user.id == '2'">
           <div class="info-label">商家入驻</div>
           <div class="info-btn">
-            <div><a href="javascript:void(0)">成为VIP尊享特权</a></div>
+            <div><a href="shop-import.html">入驻</a></div>
             <div><i class="el-icon-arrow-right"></i></div>
           </div>
         </div>
@@ -150,15 +140,6 @@
         },
         goBack() {
           location.href = 'info.html'
-        },
-        nameEdit() {
-          location.href = 'name-edit.html'
-        },
-        iconEdit() {
-          location.href = 'icon-edit.html'
-        },
-        introduceEdit() {
-          location.href = 'introduce-edit.html'
         },
         infoEdit(type) {
           location.href = 'info-edit.html?type=' + type;

@@ -18,23 +18,66 @@
 <body>
     <div id="app">
         <div class="header">
-            <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
-            <div class="header-title">商家入驻&nbsp;&nbsp;&nbsp;</div>
+            <div class="header-title">
+                <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
+                <span>商家服务</span>
+            </div>
         </div>
         <div class="content">
-            <div class="login-form">
-                <el-input style="width: 60%" placeholder="请输入商家名称" v-model="form.name"></el-input>
+            <div class="login-form" style="text-align: center;">
+                <el-input style="width: 100%" placeholder="请输入商家名称" v-model="form.name"
+                    @input="change($event)"></el-input>
                 <div style="height: 5px"></div>
-                <el-input style="width: 100%" placeholder="选择商家类型" v-model="form.password" show-password></el-input>
+                <el-select v-model="form.typeId" placeholder="请选择类型" @input="change($event)">
+                    <el-option value="1" label="美食">美食</el-option>
+                    <el-option value="2" label="KTV">KTV</el-option>
+                    <el-option value="3" label="丽人美发">丽人美发</el-option>
+                    <el-option value="4" label="美睫美甲">美睫美甲</el-option>
+                    <el-option value="5" label="按摩足疗">按摩足疗</el-option>
+                    <el-option value="6" label="美容SPA">美容SPA</el-option>
+                    <el-option value="7" label="亲子游乐">亲子游乐</el-option>
+                    <el-option value="8" label="酒吧">酒吧</el-option>
+                    <el-option value="9" label="轰趴馆">轰趴馆</el-option>
+                    <el-option value="10" label="健身运动">健身运动</el-option>
+                </el-select>
                 <div style="height: 5px"></div>
-                <el-input style="width: 100%" placeholder="请再次输入密码" v-model="form.password1" show-password></el-input>
+                <el-cascader class="block" v-model="city" :options="options" :show-all-levels="false"
+                    @input="change($event)" placeholder="请选择城市"></el-cascader>
                 <div style="height: 5px"></div>
-                <el-input placeholder="请输入验证码" v-model="form.code"></el-input>
+                <el-input type="textarea" :rows="2" style="width: 100%" placeholder="请输入详细地址" v-model="form.address"
+                    @input="change($event)"></el-input>
+                <!-- <div style="height: 5px"></div>
+                <el-input style="width: 48%" placeholder="请输入精度" v-model="form.x" @input="change($event)"></el-input>
+                <el-input style="width: 48%" placeholder="请输入纬度" v-model="form.y" @input="change($event)"></el-input> -->
                 <div style="height: 5px"></div>
-                <el-button @click="submit" style="width: 100%; background-color:#f63; color: #fff;">提交</el-button>
-                <div style="text-align: right; color:#333333; margin: 5px 0"><a href="/find-pass1.html">邮箱验证找回</a>
+                <el-time-select placeholder="营业开始时间" v-model="form.startTime" :picker-options="{
+                      start: '00:00',
+                      step: '00:15',
+                      end: '23:45',
+                    }" @input="change($event)">
+                </el-time-select>
+                <el-time-select placeholder="营业结束时间" v-model="form.endTime" :picker-options="{
+                      start: '00:00',
+                      step: '00:15',
+                      end: '23:45',
+                      minTime: form.startTime
+                    }" @input="change($event)">
+                </el-time-select>
+            </div>
+            <div class="upload-box">
+                <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
+                <div class="upload-btn" @click="openFileDialog">
+                    <i class="el-icon-camera"></i>
+                    <div style="font-size: 12px;line-height: 12px">上传照片</div>
+                </div>
+                <div class="pic-list">
+                    <div class="pic-box" v-for="(f,i) in fileList" :key="i">
+                        <img :src="f" alt="">
+                        <i class="el-icon-close" @click="deletePic(i)"></i>
+                    </div>
                 </div>
             </div>
+            <el-button @click="submit" style="width: 100%; background-color:#f63; color: #fff;">提交</el-button>
         </div>
     </div>
     <script src="./js/vue.js"></script>
@@ -47,59 +90,109 @@
         const app = new Vue({
             el: "#app",
             data: {
-                radio: "",
-                disabled: false, // 发送短信按钮
-                codeBtnMsg: "发送验证码", // 发送短信按钮提示
-                form: {
-                }
+                user: "",
+                fileList: [], // 文件列表
+                form: {},
+                city: [],
+                options: []
+            },
+            created() {
+                let shop = JSON.parse(sessionStorage.getItem("shop")) || {};
+                this.checkLogin();
+                this.prepare(shop);
+                this.queryCity();
             },
             methods: {
                 submit() {
-                    if (!this.form.phone || !this.form.code) {
-                        this.$message.error("手机号和验证码不能为空！");
-                        return
+                    if (!this.form.name || !this.form.typeId || !this.city || !this.form.address || !this.form.startTime || !this.form.endTime) {
+                        this.$message.error("消息不全！");
+                        return;
                     }
-                    if (this.form.password !== this.form.password1) {
-                        this.$message.error("2次密码不相等！");
-                        return
-                    }
-                    axios.post("/user/findPassword", this.form)
+                    this.form.area = this.city[1];
+                    this.form.images = this.fileList.join(",");
+                    this.form.openHours = this.form.startTime + "-" + this.form.endTime;
+                    axios.post("/shop", this.form)
                         .then(({ data }) => {
                             if (data) {
                                 // 保存用户信息到session
-                                sessionStorage.setItem("token", data);
+                                // sessionStorage.setItem("token", data);
+                                this.from.address = "";
+                                location.href = "shop-detail.html?id=" + data;
                             }
-                            // 跳转到登录页
-                            location.href = "/login.html"
                         })
                         .catch(err => this.$message.error(err))
+                },
+                queryCity() {
+                    axios.post("/user/city")
+                        .then(({ data }) => {
+                            this.options = data;
+                            console.log(this.options);
+                        })
+                        .catch(this.$message.error)
+                },
+                checkLogin() {
+                    // 获取token
+                    let token = sessionStorage.getItem("token");
+                    if (!token) {
+                        location.href = "login.html"
+                    }
+                    // 查询用户信息
+                    axios.get("/user/me")
+                        .then(({ data }) => {
+                            this.user = data;
+                        })
+                        .catch(err => {
+                            this.$message.error(err);
+                            setTimeout(() => location.href = "login.html", 200)
+                        })
                 },
                 goBack() {
                     history.back();
                 },
-                sendCode() {
-                    if (!this.form.phone) {
-                        this.$message.error("手机号不能为空");
+                openFileDialog() {
+                    this.$refs.fileInput.click();
+                },
+                fileSelected() {
+                    let file = this.$refs.fileInput.files[0];
+                    let formData = new FormData();
+                    formData.append("file", file);
+                    const config = {
+                        headers: { "Content-Type": "multipart/form-data;boundary=" + new Date().getTime() }
+                    };
+                    axios
+                        .post("/upload/file", formData, config)
+                        .then(({ data }) => {
+                            this.fileList.push('/files' + data.fileName);
+                            console.log("文件名:" + data.fileName);
+                        })
+                        .catch(this.$message.error);
+                },
+                deletePic(i) {
+                    axios.get("/upload/file/delete?name=" + this.fileList[i])
+                        .then(() => this.fileList.splice(i, 1))
+                        .catch(this.$message.error)
+                },
+                prepare(shop) {
+                    if (shop.id === undefined) {
+                        console.log("shop为空");
                         return;
+                    } else {
+                        console.log("shop不为空");
+                        this.fileList = shop.images;
+                        this.form.name = shop.name;
+                        this.form.typeId = shop.typeId;
+                        this.form.area = shop.area;
+                        this.form.address = shop.address;
+                        // this.form.x = shop.x;
+                        // this.form.y = shop.y;
+                        this.form.id = shop.id;
+                        this.form.startTime = shop.openHours.split("-")[0];
+                        this.form.endTime = shop.openHours.split("-")[1];
                     }
-                    // 发送验证码
-                    axios.post("/user/phoned?phone=" + this.form.phone)
-                        .then(() => { })
-                        .catch(err => {
-                            console.log(err);
-                            this.$message.error(err)
-                        });
-                    // 禁用按钮
-                    this.disabled = true;
-                    // 按钮倒计时
-                    let i = 60;
-                    this.codeBtnMsg = (i--) + '秒后可重发'
-                    let taskId = setInterval(() => this.codeBtnMsg = (i--) + '秒后可重发', 1000);
-                    setTimeout(() => {
-                        this.disabled = false;
-                        clearInterval(taskId);
-                        this.codeBtnMsg = "发送验证码";
-                    }, 59000)
+                    sessionStorage.removeItem("shop");
+                },
+                change(e) {
+                    this.$forceUpdate();
                 }
             }
         })

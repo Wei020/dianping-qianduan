@@ -41,13 +41,15 @@
       </div>
     </div>
     <div style="height: 85%; overflow-y: scroll; overflow-x: hidden">
-      <div class="blog-info-box" ref="swiper" @touchstart="moveStart" @touchmove="moving" @touchend="moveEnd">
-        <div class="swiper-item" v-for="(img, i) in blog.images" :key="i">
-          <img :src="img" alt="" style="width: 100%" height="100%">
+      <div class="blog-info-box" ref="swiper">
+        <div class="swiper-item">
+          <i class="el-icon-arrow-left" @click="imgIndex--" v-show="imgIndex > 0"></i>
+          <img :src="blog.images[imgIndex]" alt="" style="width: 100%" height="100%">
+          <i class="el-icon-arrow-right" @click="imgIndex++" v-show="imgIndex < blog.images.length - 1"></i>
         </div>
       </div>
       <div class="basic">
-        <div class="basic-icon" @click="toOtherInfo">
+        <div class="basic-icon" @click="toOtherInfo(blog.userId)">
           <img :src="blog.icon || '/files/icons/default-icon.png'" alt="">
         </div>
         <div class="basic-info">
@@ -96,47 +98,43 @@
       <div class="blog-divider"></div>
       <div class="blog-comments">
         <div class="comments-head">
-          <div>网友评价 <span>（{{items.length}}）</span></div>
+          <div>热门评论</div>
           <div><i class="el-icon-arrow-right"></i></div>
         </div>
         <div class="comment-list">
           <div class="comment-box" v-for="item in items" :key="item.id">
-            <div class="comment-icon">
+            <div class="comment-icon" @click="toOtherInfo(item.userId)">
               <img :src="item.user.icon || '/files/icons/default-icon.png'" alt="">
             </div>
             <div class="comment-info">
-              <div class="comment-user">{{item.user.nickName}} <span>Lv5</span></div>
-              <!-- <div style="display: flex;">
-              打分
-              <el-rate disabled v-model="4.5"></el-rate>
-            </div> -->
-              <div style="padding: 5px 0; font-size: 14px">
+              <div class="comment-user">
+                <span style="width: 30%;">{{item.user.nickName}}</span>
+                <i class="el-icon-delete" v-if="item.user.id == user.id" @click="deleteComment(item)"
+                  style="width: 60%; text-align: right;"></i>
+              </div>
+              <div style="padding: 5px 0; font-size: 14px" @click="respondTo(item)">
                 {{item.content}}
               </div>
-              <!-- <div class="comment-images" >
-              <img
-                  src="https://qcloud.dpfile.com/pc/6T7MfXzx7USPIkSy7jzm40qZSmlHUF2jd-FZUL6WpjE9byagjLlrseWxnl1LcbuSGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-              <img
-                  src="https://qcloud.dpfile.com/pc/sZ5q-zgglv4VXEWU71xCFjnLM_jUHq-ylq0GKivtrz3JksWQ1f7oBWZsxm1DWgcaGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-              <img
-                  src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-              <img
-                  src="https://qcloud.dpfile.com/pc/xZy6W4NwuRFchlOi43DVLPFsx7KWWvPqifE1JTe_jreqdsBYA9CFkeSm2ZlF0OVmGybIjx5eX6WNgCPvcASYAw.jpg"
-                  alt="">
-            </div> -->
               <div class="comment-more">
-                浏览641 &nbsp;&nbsp;&nbsp;&nbsp;评论5
-                <i class="el-icon-delete" v-if="item.user.id == user.id" @click="deleteComment(item)"></i>
+                <div class="respondBox" v-for="r in item.respondLists" :key="r.id">
+                  <div class="respond-header">
+                    <img :src="r.user.icon" alt="" @click="toOtherInfo(r.userId)">
+                    <span class="title" style="width: 50%;">{{r.user.nickName}}回复{{r.answerUser.nickName}}</span>
+                    <i class="el-icon-delete" v-if="r.user.id == user.id" @click="deleteComment(r)"
+                      style="width: 30%; text-align: right;"></i>
+                  </div>
+                  <div class="respond-content" @click="respondTo(r)">
+                    {{r.content}}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+          <div class="bottom" id="bottom"></div>
           <div
             style="display: flex; justify-content: space-between;padding: 15px 0; border-top: 1px solid #f1f1f1; margin-top: 10px;">
-            <div>查看全部{{items.length}}条评价</div>
-            <div><i class="el-icon-arrow-right"></i></div>
+            <div>查看所有评论</div>
+            <div @click="queryAll()"><i class="el-icon-arrow-right"></i></div>
           </div>
         </div>
       </div>
@@ -156,12 +154,18 @@
       </div>
       <div style="width: 40%"></div>
       <div class="foot-box">
-        <div class="foot-view" @click="input"><i class="el-icon-chat-square"></i></div>
+        <div class="foot-view" @click="isShow = 1"><i class="el-icon-chat-square"></i></div>
       </div>
     </div>
     <div class="foot" v-show="isShow === 1">
-      <el-input style="width: 70%" v-model="content"></el-input>
-      <el-button style="width: 28%" @click="comment">发送</el-button>
+      <el-input type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="content" resize="none" maxlength="100"
+        outline="none" style="width: 70%;"></el-input>
+      <el-button style="width: 28%" @click="comment(1)">发送</el-button>
+    </div>
+    <div class="foot" v-show="isShow === 2">
+      <el-input type="textarea" :autosize="{ minRows: 1, maxRows: 4}" v-model="content" resize="none" maxlength="100"
+        outline="none" style="width: 70%;" :placeholder="getStr()"></el-input>
+      <el-button style="width: 28%" @click="comment(2)">发送</el-button>
     </div>
   </div>
   <script src="./js/vue.js"></script>
@@ -188,20 +192,11 @@
         duration: 300,
         container: null,
         items: [],
-        active: 0,
-        start: {
-          x: 0,
-          y: 0
-        },
-        move: {
-          x: 0,
-          y: 0
-        },
-        sensitivity: 60,
-        resistance: 0.3,
+        imgIndex: 0,
         content: "",
         isShow: 0,
-        show: false
+        show: false,
+        respond: {}
       },
       created() {
         let id = util.getUrlParam("id");
@@ -213,19 +208,22 @@
           this.container = this.$refs.swiper
           // 获得所有的子节点
           this.items = this.container.querySelectorAll('.swiper-item')
-          this.updateItemWidth()
-          this.setTransform()
-          this.setTransition('none')
+          // this.updateItemWidth()
+          // this.setTransform()
+          // this.setTransition('none')
         },
         goBack() {
           history.back();
         },
-        toOtherInfo() {
-          if (this.blog.userId === this.user.id) {
+        toOtherInfo(id) {
+          if (id == this.user.id) {
             location.href = "/info.html"
           } else {
-            location.href = "/other-info.html?id=" + this.blog.userId
+            location.href = "/other-info.html?id=" + id
           }
+        },
+        queryAll() {
+          location.href = "/all-comments.html?id=" + this.blog.id + "&type=" + 1;
         },
         queryBlogById(id) {
           axios.get("/blog/" + id)
@@ -242,6 +240,9 @@
               this.queryLoginUser();
             })
             .catch(this.$message.error)
+        },
+        getStr() {
+          return "回复" + this.respond.name;
         },
         queryShopById(shopId) {
           axios.get("/shop/" + shopId)
@@ -265,13 +266,6 @@
             .catch(this.$message.error)
         },
         addLike() {
-          // if (this.blog.isLike) {
-          //   this.blog.isLike = false;
-          //   this.blog.liked = this.blog.liked - 1;
-          // } else {
-          //   this.blog.isLike = true;
-          //   this.blog.liked = this.blog.liked + 1;
-          // }
           axios.put("/blog/like/" + this.blog.id)
             .then(({ data }) => {
               axios.get("/blog/" + this.blog.id)
@@ -316,7 +310,7 @@
                 this.isFollowed();
               }
             })
-            .catch(console.log)
+            .catch(this.$message.error)
         },
         // 获取父容器宽度，并且更新所有的子节点宽度，因为我们默认所有子节点的宽高等于父节点的宽高
         updateItemWidth() {
@@ -333,96 +327,7 @@
             item.style.transform = transform
           })
         },
-        // 给每一个子项添加transition过度动画
-        setTransition(duration) {
-          duration = duration || this.duration
-          duration = typeof duration === 'number' ? (duration + 'ms') : duration
-          each(this.items, (item) => {
-            item.style.webkitTransition = duration
-            item.style.transition = duration
-          })
-        },
-        moveStart(e) {
-          console.log('moveStart')
-          this.start.x = e.changedTouches[0].pageX
-          this.start.y = e.changedTouches[0].pageY
-          this.setTransition('none')
-        },
-        moving(e) {
-          console.log('moving')
-          e.preventDefault()
-          e.stopPropagation()
-          let distanceX = e.changedTouches[0].pageX - this.start.x
-          let distanceY = e.changedTouches[0].pageY - this.start.y
-          if (Math.abs(distanceX) > Math.abs(distanceY)) {
-            this.isMoving = true
-            this.move.x = this.start.x + distanceX
-            this.move.y = this.start.y + distanceY
-            // 当活动子项为第一项且手指向右滑动或者活动项为最后一项切向左滑动的时候，添加阻力，形成一个拉弹簧的效果
-            if ((this.active === 0 && distanceX > 0) || (this.active === (this.items.length - 1) && distanceX < 0)) {
-              distanceX = distanceX * this.resistance
-            }
-            this.setTransform(distanceX)
-          }
-        },
-        moveEnd(e) {
-          console.log('moveEnd')
-          if (this.isMoving) {
-            e.preventDefault()
-            e.stopPropagation()
-            let distance = this.move.x - this.start.x
-            if (Math.abs(distance) > this.sensitivity) {
-              if (distance < 0) {
-                this.next()
-              } else {
-                this.prev()
-              }
-            } else {
-              this.back()
-            }
-            this.reset()
-            this.isMoving = false
-          }
-        },
-        next() {
-          let index = this.active + 1
-          // 运用动画切换到指定下标的子项
-          this.go(index)
-        },
-        prev() {
-          let index = this.active - 1
-          // 运用动画切换到指定下标的子项
-          this.go(index)
-        },
-        reset() {
-          this.start.x = 0
-          this.start.y = 0
-          this.move.x = 0
-          this.move.y = 0
-        },
-        back() {
-          this.setTransition()
-          this.setTransform()
-        },
-        destroy() {
-          this.setTransition('none')
-        },
-        // 运用动画切换到指定下标的子项
-        go(index) {
-          this.active = index
-          if (this.active < 0) {
-            this.active = 0
-          } else if (this.active > this.items.length - 1) {
-            this.active = this.items.length - 1
-          }
-          this.$emit('change', this.active)
-          this.setTransition()
-          this.setTransform()
-        },
-        input() {
-          this.isShow = 1;
-        },
-        comment() {
+        comment(type) {
           if (this.content === "") {
             this.isShow = 0;
             return;
@@ -431,13 +336,27 @@
           commentObj.content = this.content;
           commentObj.userId = this.user.id;
           commentObj.blogId = this.blog.id;
-          commentObj.parentId = 0;
+          if (type == 1) {
+            commentObj.parentId = 0;
+          } else if (type == 2) {
+            commentObj.parentId = this.respond.parentId;
+            commentObj.answerId = this.respond.answerId;
+            commentObj.answerUser = this.respond.answerUser;
+          }
           commentObj.liked = 0;
           commentObj.status = 0;
           axios.post("/blog-comments/add", commentObj)
             .then(({ data }) => {
-              this.items = this.items.concat(data)
-              console.log(data);
+              if (type == 1) {
+                this.items = this.items.concat(data)
+                console.log(data);
+                var element = document.getElementById("bottom");
+                setTimeout(() => {
+                  element.scrollIntoView();
+                })
+              } else if (type == 2) {
+                this.queryBlogComments(this.blog.id);
+              }
               this.content = "";
               this.isShow = 0;
             })
@@ -445,6 +364,21 @@
               console.log(err);
               this.$message.error(err)
             });
+        },
+        respondTo(comment) {
+          if (comment.userId == this.user.id) {
+            this.isShow = 0;
+            return;
+          }
+          this.respond.name = comment.user.nickName;
+          if (comment.parentId == 0) {
+            this.respond.parentId = comment.id;
+          } else {
+            this.respond.parentId = comment.parentId;
+          }
+          this.respond.answerId = comment.id;
+          this.respond.answerUser = comment.user;
+          this.isShow = 2;
         },
         deleteBlog() {
           this.$confirm('是否确定删除该博客?', '提示', {
