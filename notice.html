@@ -21,6 +21,7 @@
         <div class="content">
             <div class="msg-list" @scroll="onScroll" id="list">
                 <div class="msg-box" v-for="notice in records" @click="doNotice(notice)">
+                    <div class="user-icon"><img :src="notice.fromIcon || '/files/icons/default-icon.png'"></div>
                     <div class="msg-content" v-if="notice.type === 0">{{notice.fromNickname}}申请加入{{notice.content}}
                     </div>
                     <div class="msg-content" v-if="notice.type === 2 || notice.type === 3 || notice.type == 4">

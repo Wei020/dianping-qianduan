@@ -67,6 +67,13 @@
     padding-left: 0px;
 }
 
+.no-read {
+    width: 10%;
+    text-align: right;
+    display: inline-block;
+    color: red;
+}
+
 .chat-box {
     width: 100%;
     background-color: #fff;
