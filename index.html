@@ -142,7 +142,12 @@
         queryCity() {
           // 查询用户信息
           let info = JSON.parse(sessionStorage.getItem("userInfo")) || {};
-          if (info.city !== undefined) {
+          console.log(info);
+          if (info.city == undefined) {
+            this.city = "未登录";
+          } else if (info.city == "") {
+            this.city = "未设置";
+          } else {
             this.city = info.city;
           }
         },
