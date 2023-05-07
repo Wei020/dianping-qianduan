@@ -54,13 +54,13 @@
     flex-wrap: nowrap;
     justify-content: flex-start; */
     font-size: medium;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .time {
     width: 100%;
     text-align: center;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .others {
@@ -98,11 +98,11 @@
 }
 
 .me .user-icon {
-    margin-left: 1px;
+    margin-left: 2px;
 }
 
 .others .msg-content {
-    margin-left: 1px;
+    margin-left: 2px;
 }
 
 

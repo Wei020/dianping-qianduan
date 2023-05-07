@@ -39,6 +39,11 @@
     border-radius: 3px;
 }
 
+.blog-img2 video {
+    width: 100%;
+    border-radius: 3px;
+}
+
 .blog-title {
     padding: 2px 10px;
     line-height: 24px;

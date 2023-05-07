@@ -72,6 +72,12 @@
     border-radius: 5px;
 }
 
+.pic-box video {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+}
+
 .pic-box i {
     position: absolute;
     z-index: 99;

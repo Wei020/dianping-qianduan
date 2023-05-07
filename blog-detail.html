@@ -42,10 +42,16 @@
     </div>
     <div style="height: 85%; overflow-y: scroll; overflow-x: hidden">
       <div class="blog-info-box" ref="swiper">
-        <div class="swiper-item">
+        <div class="swiper-item" v-if="blog.type == 1">
           <i class="el-icon-arrow-left" @click="imgIndex--" v-show="imgIndex > 0"></i>
           <img :src="blog.images[imgIndex]" alt="" style="width: 100%" height="100%">
           <i class="el-icon-arrow-right" @click="imgIndex++" v-show="imgIndex < blog.images.length - 1"></i>
+        </div>
+        <div class="swiper-item" v-else-if="blog.type == 2">
+          <video controls="controls">
+            <source :src="blog.images[0] || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
+              type="video/mp4" />
+          </video>
         </div>
       </div>
       <div class="basic">
@@ -54,7 +60,7 @@
         </div>
         <div class="basic-info">
           <div class="name">{{blog.name}}</div>
-          <span class="time">{{formatTime(new Date(blog.createTime))}}</span>
+          <span class="time">{{formatTime(new Date(blog.updateTime))}}</span>
         </div>
         <div style="width: 20%">
           <div class="logout-btn" @click="follow" v-show="!user || user.id != blog.userId ">
@@ -99,7 +105,7 @@
       <div class="blog-comments">
         <div class="comments-head">
           <div>热门评论</div>
-          <div><i class="el-icon-arrow-right"></i></div>
+          <!-- <div><i class="el-icon-arrow-right"></i></div> -->
         </div>
         <div class="comment-list">
           <div class="comment-box" v-for="item in items" :key="item.id">

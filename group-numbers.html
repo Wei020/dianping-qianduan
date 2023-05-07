@@ -20,9 +20,13 @@
         </div>
         <div class="content">
             <div class="user-list">
-                <div class="user-box" @click="toOtherInfo(user.id)" v-for="user in users">
-                    <div class="user-icon"><img :src="user.icon || '/files/icons/default-icon.png'" alt=""></div>
-                    <div class="user-nickname">{{user.nickName}}</div>
+                <div class="user-box" v-for="u in users">
+                    <div class="user-icon" @click="toOtherInfo(u.id)"><img
+                            :src="u.icon || '/files/icons/default-icon.png'" alt=""></div>
+                    <div class="user-nickname">{{u.nickName}}</div>
+                    <div class="out" v-show="u.id != user.id && group.createId == user.id">
+                        <i class="el-icon-delete" @click="out(u.id)"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,6 +90,32 @@
                         .catch(err => {
                             location.href = "login.html"
                         })
+                },
+                out(id) {
+                    this.$confirm('是否移除群聊?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        axios.post("/group/out?id=" + this.group.id + "&userId=" + id)
+                            .then(({ data }) => {
+                                this.group = data;
+                                this.queryUsers(this.group.id);
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                this.$message.error(err)
+                            });
+                        this.$message({
+                            type: 'success',
+                            message: '移除成功!'
+                        });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'success',
+                            message: '已取消'
+                        });
+                    });
                 },
                 toOtherInfo(id) {
                     if (id === this.user.id) {

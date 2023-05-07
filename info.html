@@ -38,7 +38,8 @@
   <div id="app">
     <div class="header">
       <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
-      <div class="header-title">个人主页&nbsp;&nbsp;&nbsp;</div>
+      <div class="header-title">个人主页</div>
+      <div class="header-submit-btn"></div>
     </div>
     <div class="basic">
       <div class="basic-icon">
@@ -59,14 +60,20 @@
     </div>
     <div class="introduce">
       <span v-if="info.introduce">{{info.introduce}}</span>
-      <span v-else>添加个人简介，让大家更好的认识你 <i class="el-icon-edit"></i></span>
+      <span v-else>添加个人简介，让大家更好的认识你 <i class="el-icon-edit" @click="infoEdit(2)"></i></span>
     </div>
     <div class="content">
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <el-tab-pane label="笔记" name="1">
           <div class="blog-list" @scroll="onScroll">
             <div v-for="b in blogs" :key="b.id" class="blog-item" @click="toBlogDetail(b.id)">
-              <div class="blog-img"><img :src="b.images.split(',')[0]" alt=""></div>
+              <div class="blog-img">
+                <img :src="b.images.split(',')[0]" alt="" v-if="b.type == 1">
+                <video controls="controls" v-else-if="b.type == 2">
+                  <source :src="b.images.split(',')[0] || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
+                    type="video/mp4" />
+                </video>
+              </div>
               <div class="blog-info">
                 <div class="blog-title">{{b.title}}</div>
                 <div class="blog-liked"><img src="/files/thumbup.png" alt=""> {{b.liked}}</div>
@@ -80,7 +87,14 @@
             <div v-for="c in comments" :key="c.id" class="comment-item" @click="toBlogDetail(c.blogId)">
               <div class="comment-info">{{c.content}}</div>
               <div class="item">
-                <div class="blog-img"><img :src="c.blog.images.split(',')[0]" alt=""></div>
+                <div class="blog-img">
+                  <img :src="c.blog.images.split(',')[0]" alt="" v-if="c.blog.type == 1">
+                  <video controls="controls" v-else-if="c.blog.type == 2">
+                    <source
+                      :src="c.blog.images.split(',')[0] || '/imgs/blogs/15/0/3a18eb14-4e6b-46ad-b22a-81645c5aaa55.mp4'"
+                      type="video/mp4" />
+                  </video>
+                </div>
                 <div class="blog-info">
                   <div class="blog-title">{{c.blog.title}}</div>
                   <div class="blog-liked"><img src="/files/thumbup.png" alt=""> {{c.blog.liked}}</div>
@@ -173,6 +187,9 @@
               this.blogs = this.blogs.concat(data)
             })
             .catch(this.$message.error)
+        },
+        infoEdit(type) {
+          location.href = 'info-edit.html?type=' + type;
         },
         queryUser() {
           // 查询用户信息

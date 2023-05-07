@@ -166,7 +166,7 @@
                         cancelButtonText: '取消',
                         type: 'warning'
                     }).then(() => {
-                        axios.post("/group/out/" + this.group.id)
+                        axios.post("/group/out?id=" + this.group.id + "&userId=" + this.user.id)
                             .then(({ data }) => {
                                 this.group = data;
                                 this.followed = false;

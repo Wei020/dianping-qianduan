@@ -97,6 +97,11 @@
     position: relative;
 }
 
+.swiper-item video {
+    width: 100%;
+    height: 100%;
+}
+
 .swiper-item .el-icon-arrow-left {
     position: absolute;
     left: 0;

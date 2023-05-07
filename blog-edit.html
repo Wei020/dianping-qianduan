@@ -26,13 +26,16 @@
     </div>
     <div class="upload-box">
       <input type="file" @change="fileSelected" name="file" ref="fileInput" style="display: none">
-      <div class="upload-btn" @click="openFileDialog">
+      <div class="upload-btn" @click="openFileDialog" v-show="params.type == 1">
         <i class="el-icon-camera"></i>
-        <div style="font-size: 12px;line-height: 12px">上传照片</div>
+        <div style="font-size: 12px;line-height: 12px">照片/视频</div>
       </div>
       <div class="pic-list">
         <div class="pic-box" v-for="(f,i) in fileList" :key="i">
-          <img :src="f" alt="">
+          <img :src="f" alt="" v-if="params.type == 1">
+          <video controls="controls" v-else-if="params.type == 2">
+            <source :src="f" type="video/mp4" />
+          </video>
           <i class="el-icon-close" @click="deletePic(i)"></i>
         </div>
       </div>
@@ -96,6 +99,7 @@
       created() {
         let blog = JSON.parse(sessionStorage.getItem("blog")) || {};
         let shopId = util.getUrlParam("shopId");
+        this.params.type = 1;
         this.prepare(blog);
         this.checkLogin();
         this.queryShops();
@@ -128,7 +132,7 @@
           data.shopId = this.selectedShop.id;
           axios.post("/blog", data)
             .then(resp => location.href = "/info.html")
-            .catch(this.$message.error)
+            .catch(this.$message.error("文件过大！"))
         },
         openFileDialog() {
           this.$refs.fileInput.click();
@@ -143,14 +147,22 @@
           axios
             .post("/upload/file", formData, config)
             .then(({ data }) => {
+              if (data.type == 2) {
+                this.params.type = 2;
+                this.fileList.splice(0);
+              }
               this.fileList.push('/files' + data.fileName);
-              console.log("文件名:" + data.fileName);
             })
             .catch(this.$message.error);
         },
         deletePic(i) {
           axios.get("/upload/file/delete?name=" + this.fileList[i])
-            .then(() => this.fileList.splice(i, 1))
+            .then(() => {
+              if (this.params.type == 2) {
+                this.params.type = 1;
+              }
+              this.fileList.splice(i, 1);
+            })
             .catch(this.$message.error)
         },
         checkLogin() {

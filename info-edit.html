@@ -58,6 +58,11 @@
                 <el-cascader class="block" v-model="city" :options="options" :show-all-levels="false"
                     @change="handleChange"></el-cascader>
             </div>
+            <div class="pwd" v-else-if="type == 6">
+                <input type="password" v-model="user.pwdO" placeholder="请输入旧密码" maxlength="16">
+                <div style="height: 5px"></div>
+                <input type="password" v-model="user.pwdN" placeholder="请输入新密码" maxlength="16">
+            </div>
         </div>
     </div>
     <script src="./js/vue.js"></script>
@@ -104,7 +109,11 @@
                     history.back();
                 },
                 submit(type) {
-                    if (type === '1' || type === '0') {
+                    if (type === '1' || type === '0' || type == 6) {
+                        if (type == 6 && this.user.pwdO == this.user.pwdN) {
+                            this.$message.error("旧密码不能与原密码相同！");
+                            return;
+                        }
                         axios.post("/user/edit", this.user)
                             .then(resp => location.href = "/info-more.html")
                             .catch(this.$message.error)

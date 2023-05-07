@@ -19,7 +19,8 @@
   <div id="app">
     <div class="header">
       <div class="header-back-btn" @click="goBack"><i class="el-icon-arrow-left"></i></div>
-      <div class="header-title">个人信息&nbsp;&nbsp;&nbsp;</div>
+      <div class="header-title">个人信息</div>
+      <div class="header-submit-btn"></div>
     </div>
     <div class="edit-container">
       <div class="info-box">
@@ -104,6 +105,12 @@
             <div><i class="el-icon-arrow-right"></i></div>
           </div>
         </div>
+        <div class="info-item">
+          <div class="info-label">密码修改</div>
+          <div class="info-btn" @click="infoEdit(6)">
+            <div><i class="el-icon-arrow-right"></i></div>
+          </div>
+        </div>
       </div>
     </div>
     <foot-bar :active-btn="4"></foot-bar>
@@ -144,50 +151,6 @@
         infoEdit(type) {
           location.href = 'info-edit.html?type=' + type;
         },
-        handleGender(command) {
-          this.$confirm('是否确认修改?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.info.gender = command;
-            console.log(this.info.gender);
-            axios.post("/user/infoEdit", this.info)
-              .catch(this.$message.error)
-            this.$message({
-              type: 'success',
-              message: '修改成功!'
-            });
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消操作'
-            });
-          });
-        },
-        handleCity(command) {
-          this.$confirm('是否确认修改?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            this.info.city = command;
-            axios.post("/user/infoEdit", this.info)
-              .catch(this.$message.error)
-            this.$message({
-              type: 'success',
-              message: '修改成功!'
-            });
-          }).catch(() => {
-            this.$message({
-              type: 'info',
-              message: '已取消操作'
-            });
-          });
-        },
-        birthdayEdit() {
-          location.href = 'birthday-edit.html'
-        }
       },
       computed: {
         queryGender() {

@@ -25,7 +25,12 @@
     </div>
     <div class="blog-list" @scroll="onScroll">
       <div class="blog-box" v-for="b in blogs2" :key="b.id">
-        <div class="blog-img2" @click="toBlogDetail(b)"><img :src="b.img" alt=""></div>
+        <div class="blog-img2" @click="toBlogDetail(b)">
+          <img :src="b.img" alt="" v-if="b.type == 1">
+          <video controls="controls" v-else-if="b.type == 2">
+            <source :src="b.img" type="video/mp4" />
+          </video>
+        </div>
         <div class="blog-title">{{b.title}}</div>
         <div class="blog-foot">
           <div class="blog-user-icon"><img :src="b.icon || '/imgs/icons/default-icon.png'" alt=""></div>
