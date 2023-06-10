@@ -384,6 +384,16 @@
     outline: none;
 }
 
+.voucher-list {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    overflow-y: auto;
+    align-content: flex-start;
+}
+
 .voucher-box {
     background-color: #fff1f1;
     border-radius: 5px;
@@ -391,7 +401,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 5px;
-    margin: 10px 0;
+    margin: 5px 0;
     width: 90%;
 }
 
@@ -417,12 +427,12 @@
 .voucher-left {
     flex-grow: 1;
     margin-left: 15px;
-    width: 67%;
+    width: 30%;
 }
 
 .voucher-state {
     margin-right: 15px;
-    width: 28%;
+    width: 55%;
 }
 
 .voucher-title,
@@ -437,11 +447,15 @@
 }
 
 .state {
-    text-align: center;
+    text-align: right;
+    color: red;
 }
 
 .end-time {
-    text-align: center;
+    text-align: right;
+    font-size: 10px;
+    color: #F63;
+    margin-right: 2px;
 }
 
 .voucher-title {

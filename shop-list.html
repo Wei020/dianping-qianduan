@@ -43,8 +43,8 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div class="sort-item" @click="sortAndQuery('sold')">
-        销量 <i class="el-icon-arrow-down el-icon--right"></i>
+      <div class="sort-item" @click="sortAndQuery('city')">
+        同城 <i class="el-icon-arrow-down el-icon--right"></i>
       </div>
       <div class="sort-item" @click="sortAndQuery('comments')">
         人气 <i class="el-icon-arrow-down el-icon--right"></i>
@@ -130,7 +130,6 @@
             this.params.current = 1;
             this.queryShops();
             this.show = false;
-            this.condition = "";
           }
         },
         queryShops() {
@@ -148,6 +147,7 @@
               }
               data.forEach(s => s.images = s.images.split(',')[0]);
               this.shops = this.shops.concat(data);
+              this.params.condition = "";
             })
             .catch(err => {
               console.log(err);

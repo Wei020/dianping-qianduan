@@ -20,7 +20,8 @@
         </div>
         <div class="content">
             <div class="msg-list" @scroll="onScroll">
-                <div class="msg-box" v-for="(msg, index) in records" :key="msg.id">
+                <!-- <div class="msg-box" v-for="(msg, index) in records" :key="msg.id"> -->
+                <div class="msg-box" v-for="(msg, index) in records">
                     <div class="time"
                         v-if="index == 0 || getTimeStamp(msg.sendTime) - getTimeStamp(records[index - 1].sendTime) > 300000">
                         {{formatTime(msg.sendTime)}}
@@ -107,7 +108,7 @@
                     this.stompClient = Stomp.over(socket);//创建STOMP实例
                     if (this.chat.type === 0) {
                         this.stompClient.connect({}, success => {
-                            this.stompClient.subscribe('/topic/greetings', msg => {
+                            this.stompClient.subscribe('/topic/greetings/' + this.chat.toId, msg => {
                                 //接收到的消息数据
                                 let receiveMsg = JSON.parse(msg.body);
                                 this.records = this.records.concat(receiveMsg);
@@ -116,7 +117,7 @@
                         })
                     } else {
                         this.stompClient.connect({}, success => {
-                            this.stompClient.subscribe('/user/' + this.user.id + '/chat', msg => {
+                            this.stompClient.subscribe('/user/' + this.user.id + '/chat/' + this.chat.id, msg => {
                                 //接收到的消息数据
                                 let receiveMsg = JSON.parse(msg.body);
                                 console.log("收到消息" + receiveMsg);

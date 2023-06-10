@@ -59,9 +59,11 @@
                     @change="handleChange"></el-cascader>
             </div>
             <div class="pwd" v-else-if="type == 6">
-                <input type="password" v-model="user.pwdO" placeholder="请输入旧密码" maxlength="16">
+                <el-input type="password" v-model="user.pwdO" placeholder="请输入旧密码(首次设置不需要输入)" maxlength="16"
+                    show-password></el-input>
                 <div style="height: 5px"></div>
-                <input type="password" v-model="user.pwdN" placeholder="请输入新密码" maxlength="16">
+                <el-input type="password" v-model="user.pwdN" placeholder="请输入新密码" maxlength="16"
+                    show-password></el-input>
             </div>
         </div>
     </div>

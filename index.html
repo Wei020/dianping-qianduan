@@ -38,14 +38,14 @@
     <div class="up" v-if="show === true" @click="show = false"><i class="el-icon-arrow-up"></i></div>
     <div class="blog-list" @scroll="onScroll" id="blog-list">
       <div class="blog-box-left">
-        <div class="blog-box" v-for="(b, index) in blogs" :key="b.id" @click="toBlogDetail(b)" v-if="index % 2 == 0">
-          <div class="blog-img">
+        <div class="blog-box" v-for="(b, index) in blogs" :key="b.id" v-if="index % 2 == 0">
+          <div class="blog-img" @click="toBlogDetail(b)">
             <img :src="b.img" alt="" v-if="b.type == 1">
             <video controls="controls" v-else-if="b.type == 2">
               <source :src="b.img" type="video/mp4" />
             </video>
           </div>
-          <div class="blog-title">{{b.title}}</div>
+          <div class="blog-title" @click="toBlogDetail(b)">{{b.title}}</div>
           <div class="blog-foot">
             <div class="blog-user-icon"><img :src="b.icon || '/imgs/icons/default-icon.png'" alt=""></div>
             <div class="blog-user-name">{{b.name}}</div>
@@ -63,14 +63,14 @@
         </div>
       </div>
       <div class="blog-box-right">
-        <div class="blog-box" v-for="(b, index) in blogs" :key="b.id" @click="toBlogDetail(b)" v-if="index % 2 == 1">
-          <div class="blog-img">
+        <div class="blog-box" v-for="(b, index) in blogs" :key="b.id" v-if="index % 2 == 1">
+          <div class="blog-img" @click="toBlogDetail(b)">
             <img :src="b.img" alt="" v-if="b.type == 1">
             <video controls="controls" v-else-if="b.type == 2">
               <source :src="b.img" type="video/mp4" />
             </video>
           </div>
-          <div class="blog-title">{{b.title}}</div>
+          <div class="blog-title" @click="toBlogDetail(b)">{{b.title}}</div>
           <div class="blog-foot">
             <div class="blog-user-icon"><img :src="b.icon || '/imgs/icons/default-icon.png'" alt=""></div>
             <div class="blog-user-name">{{b.name}}</div>
@@ -130,7 +130,8 @@
         current: 1,// blog的页码
         city: "",
         condition: "",
-        show: true
+        show: true,
+        isHot: true
       },
       created() {
         // 查询类型
@@ -199,6 +200,8 @@
         findBlogs() {
           if (this.condition == "") {
             this.blogs = [];
+            this.isHot = true;
+            this.current = 1;
             this.queryHotBlogsScroll();
             return;
           }
@@ -207,6 +210,7 @@
               data.forEach(b => b.img = b.images.split(",")[0]);
               this.blogs = data;
               this.condition = "";
+              this.isHot = false;
             })
             .catch(err => {
               this.$message.error(err)
@@ -219,8 +223,10 @@
           if (scrollTop + offsetHeight + 1 > scrollHeight && !this.isReachBottom) {
             this.isReachBottom = true
             // 再次查询下一页数据
-            this.current++;
-            this.queryHotBlogsScroll();
+            if (this.isHot) {
+              this.current++;
+              this.queryHotBlogsScroll();
+            }
           } else {
             this.isReachBottom = false
           }
